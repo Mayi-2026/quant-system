@@ -1,0 +1,162 @@
+{
+  "tested_at": "2026-10-14T19:28:04.528459",
+  "passed": 25,
+  "total": 26,
+  "results": [
+    {
+      "name": "实时行情-茅台",
+      "path": "/api/market/quote/600519.SH",
+      "ok": true,
+      "detail": "price=1286.0 vol=2,377,300股 amount=3,045,610,000元 pe=19.74"
+    },
+    {
+      "name": "K线-茅台(近30日)",
+      "path": "/api/market/kline/600519.SH?start_date=2026-09-01&end_date=2026-10-13",
+      "ok": true,
+      "detail": "25条 末条vol=2,657,276股 amount=0元"
+    },
+    {
+      "name": "主要指数",
+      "path": "/api/market/indices",
+      "ok": true,
+      "detail": "7个 上证=3790.6308"
+    },
+    {
+      "name": "股票搜索",
+      "path": "/api/market/search?keyword=茅台",
+      "ok": true,
+      "detail": "命中1只"
+    },
+    {
+      "name": "行业板块",
+      "path": "/api/market/sectors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "板块全景(含真实资金流)",
+      "path": "/api/market/sector-overview",
+      "ok": false,
+      "detail": "流入Top1=煤炭 净流入=None"
+    },
+    {
+      "name": "涨跌家数",
+      "path": "/api/market/breadth",
+      "ok": true,
+      "detail": "总5212 涨2791 跌2267"
+    },
+    {
+      "name": "技术指标-茅台",
+      "path": "/api/market/technical/600519.SH",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "智能选股",
+      "path": "/api/market/scan?condition=市盈率低于20且涨幅大于0",
+      "ok": true,
+      "detail": "选出1只"
+    },
+    {
+      "name": "持仓列表",
+      "path": "/api/positions/",
+      "ok": true,
+      "detail": "12个持仓 首个现价=19.85"
+    },
+    {
+      "name": "首页仪表盘(真实净值曲线)",
+      "path": "/api/data/dashboard",
+      "ok": true,
+      "detail": "总资产=2,076,826 曲线30点 今日盈亏=-9,078"
+    },
+    {
+      "name": "账户列表",
+      "path": "/api/positions/accounts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "策略模板",
+      "path": "/api/strategies/templates",
+      "ok": true,
+      "detail": "5个模板"
+    },
+    {
+      "name": "策略列表",
+      "path": "/api/strategies/",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "策略信号",
+      "path": "/api/strategies/14/signals",
+      "ok": true,
+      "detail": "空（业务表暂无数据，非模拟数据缺陷）"
+    },
+    {
+      "name": "交易记录",
+      "path": "/api/trades/",
+      "ok": true,
+      "detail": "空（业务表暂无数据，非模拟数据缺陷）"
+    },
+    {
+      "name": "交易汇总",
+      "path": "/api/trades/summary",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "自选列表",
+      "path": "/api/watchlist/",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "模拟盘账户",
+      "path": "/api/paper/accounts",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "模拟盘持仓",
+      "path": "/api/paper/accounts/2/positions",
+      "ok": true,
+      "detail": "空（业务表暂无数据，非模拟数据缺陷）"
+    },
+    {
+      "name": "信号生成(真实数据)",
+      "path": "POST /api/paper/accounts/2/signals",
+      "ok": true,
+      "detail": "生成1个信号"
+    },
+    {
+      "name": "真实回测引擎",
+      "ok": true,
+      "detail": "收益-0.3161 回撤-0.3335 夏普-0.9258 交易24笔"
+    },
+    {
+      "name": "数据统计",
+      "path": "/api/data/stats",
+      "ok": true,
+      "detail": "K线记录5,954,622条"
+    },
+    {
+      "name": "数据标准+路由",
+      "path": "/api/data/standards",
+      "ok": true,
+      "detail": "路由能力5项"
+    },
+    {
+      "name": "数据源健康",
+      "path": "/api/data/source-health",
+      "ok": true,
+      "detail": "4个源"
+    },
+    {
+      "name": "AI 会话列表",
+      "path": "/api/ai/sessions",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

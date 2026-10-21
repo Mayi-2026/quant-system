@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<title>三周期均线多头排列 · 2026-10-19</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:32px 28px 60px;background:#f6f7f9;color:#1c2024;
+font:14px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:1280px;margin:0 auto}
+h1{font-size:24px;margin:0 0 6px;letter-spacing:-.3px}
+.sub{color:#6b7480;font-size:13px;margin-bottom:22px}
+.cards{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:22px}
+.card{background:#fff;border:1px solid #e6e9ee;border-radius:10px;padding:14px 16px}
+.card .k{font-size:12px;color:#7a828d;margin-bottom:6px}
+.card .v{font-size:22px;font-weight:650;letter-spacing:-.5px}
+.card .v small{font-size:12px;font-weight:400;color:#8b939e;margin-left:4px}
+.panel{background:#fff;border:1px solid #e6e9ee;border-radius:10px;padding:18px 18px 6px;margin-bottom:18px}
+.panel h2{font-size:14px;margin:0 0 12px;color:#4a525c;font-weight:600}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;font-size:12.5px}
+.bar-label{width:96px;color:#5b636d;flex:none}
+.bar{height:9px;background:linear-gradient(90deg,#c8402f,#e8776a);border-radius:5px;min-width:4px}
+.bar-val{color:#8b939e;font-size:12px}
+table{width:100%;border-collapse:collapse;background:#fff;font-size:13px;
+border:1px solid #e6e9ee;border-radius:10px;overflow:hidden}
+thead th{background:#fafbfc;color:#7a828d;font-weight:600;font-size:12px;
+text-align:left;padding:10px 10px;border-bottom:1px solid #eceff3;white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid #f2f4f7}
+tbody tr:hover{background:#fcfbfa}
+td.num{text-align:right;font-variant-numeric:tabular-nums;font-feature-settings:"tnum"}
+td.code{font-family:ui-monospace,Menlo,monospace;color:#4a525c}
+td.nm{font-weight:600;white-space:nowrap}
+td.ind{color:#6b7480;font-size:12.5px}
+.up{color:#c8402f} .down{color:#1a8f5a}
+.chip{display:inline-block;padding:1px 7px;border-radius:5px;background:#f1f3f6;color:#6b7480;font-size:11.5px}
+.tag.st{background:#fdecea;color:#c8402f;font-size:11px;padding:0 5px;border-radius:4px;font-weight:600}
+.foot{margin-top:16px;color:#9aa1ab;font-size:12px;line-height:1.7}
+</style></head><body><div class="wrap">
+<h1>日线 · 周线 · 月线 三周期均线多头排列</h1>
+<div class="sub">数据截至 2026-10-19 收盘 · 全市场 A 股（沪深）· 口径：日 MA5&gt;MA10&gt;MA20&gt;MA60，周/月 MA5&gt;MA10&gt;MA20</div>
+<div class="cards">
+<div class="card"><div class="k">三周期同时满足</div><div class="v">42<small>只</small></div></div>
+<div class="card"><div class="k">仅日线多头</div><div class="v">420<small>只</small></div></div>
+<div class="card"><div class="k">日线+周线共振</div><div class="v">311<small>只</small></div></div>
+<div class="card"><div class="k">样本 A 股</div><div class="v">5224<small>只</small></div></div>
+<div class="card"><div class="k">当日有成交</div><div class="v">5211<small>只</small></div></div>
+</div>
+<div class="panel"><h2>行业分布（前 10）</h2><div class="bar-row"><span class="bar-label">银行</span><span class="bar" style="width:100%"></span><span class="bar-val">5</span></div><div class="bar-row"><span class="bar-label">电力行业</span><span class="bar" style="width:100%"></span><span class="bar-val">5</span></div><div class="bar-row"><span class="bar-label">电子元件</span><span class="bar" style="width:80%"></span><span class="bar-val">4</span></div><div class="bar-row"><span class="bar-label">医疗器械</span><span class="bar" style="width:60%"></span><span class="bar-val">3</span></div><div class="bar-row"><span class="bar-label">纺织服装</span><span class="bar" style="width:60%"></span><span class="bar-val">3</span></div><div class="bar-row"><span class="bar-label">家电行业</span><span class="bar" style="width:40%"></span><span class="bar-val">2</span></div><div class="bar-row"><span class="bar-label">文化传媒</span><span class="bar" style="width:40%"></span><span class="bar-val">2</span></div><div class="bar-row"><span class="bar-label">医药制造</span><span class="bar" style="width:40%"></span><span class="bar-val">2</span></div><div class="bar-row"><span class="bar-label">煤炭采选</span><span class="bar" style="width:40%"></span><span class="bar-val">2</span></div><div class="bar-row"><span class="bar-label">专业服务</span><span class="bar" style="width:20%"></span><span class="bar-val">1</span></div></div>
+<table><thead><tr>
+<th>代码</th><th>名称</th><th>板块</th><th>行业</th><th style="text-align:right">收盘</th>
+<th style="text-align:right">涨跌</th><th style="text-align:right">MA5</th><th style="text-align:right">MA10</th>
+<th style="text-align:right">MA20</th><th style="text-align:right">MA60</th>
+<th style="text-align:right">偏离MA20</th><th style="text-align:right">周线 MA5/20</th><th style="text-align:right">月线 MA5/20</th>
+</tr></thead><tbody><tr>
+<td class="code">600825</td><td class="nm">新华传媒 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">文化传媒</td>
+<td class="num">15.58</td><td class="num up">+2.77%</td>
+<td class="num">14.42</td><td class="num">12.43</td>
+<td class="num">9.13</td><td class="num">6.32</td>
+<td class="num">+70.6%</td>
+<td class="num">11.77 / 6.64</td>
+<td class="num">8.11 / 6.89</td>
+</tr><tr>
+<td class="code">301190</td><td class="nm">善水科技 </td>
+<td><span class="chip">创业板</span></td>
+<td class="ind">化学制品</td>
+<td class="num">53.80</td><td class="num up">+15.97%</td>
+<td class="num">48.64</td><td class="num">44.10</td>
+<td class="num">32.07</td><td class="num">23.22</td>
+<td class="num">+67.8%</td>
+<td class="num">39.61 / 23.38</td>
+<td class="num">28.74 / 24.91</td>
+</tr><tr>
+<td class="code">300006</td><td class="nm">莱美药业 </td>
+<td><span class="chip">创业板</span></td>
+<td class="ind">医药制造</td>
+<td class="num">9.17</td><td class="num down">-5.95%</td>
+<td class="num">8.31</td><td class="num">6.98</td>
+<td class="num">6.15</td><td class="num">5.55</td>
+<td class="num">+49.1%</td>
+<td class="num">6.74 / 5.54</td>
+<td class="num">6.09 / 5.06</td>
+</tr><tr>
+<td class="code">002242</td><td class="nm">九阳股份 </td>
+<td><span class="chip">深主板</span></td>
+<td class="ind">家电行业</td>
+<td class="num">18.69</td><td class="num up">+5.06%</td>
+<td class="num">17.83</td><td class="num">15.85</td>
+<td class="num">12.71</td><td class="num">10.08</td>
+<td class="num">+47.1%</td>
+<td class="num">14.33 / 10.05</td>
+<td class="num">11.34 / 10.22</td>
+</tr><tr>
+<td class="code">601811</td><td class="nm">新华文轩 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">文化传媒</td>
+<td class="num">25.33</td><td class="num down">-9.99%</td>
+<td class="num">24.69</td><td class="num">22.79</td>
+<td class="num">18.99</td><td class="num">14.29</td>
+<td class="num">+33.4%</td>
+<td class="num">22.28 / 14.47</td>
+<td class="num">16.22 / 14.69</td>
+</tr><tr>
+<td class="code">605058</td><td class="nm">澳弘电子 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">电子元件</td>
+<td class="num">72.41</td><td class="num up">+10.00%</td>
+<td class="num">66.64</td><td class="num">60.32</td>
+<td class="num">54.77</td><td class="num">35.86</td>
+<td class="num">+32.2%</td>
+<td class="num">61.05 / 38.50</td>
+<td class="num">42.80 / 32.95</td>
+</tr><tr>
+<td class="code">002811</td><td class="nm">郑中设计 </td>
+<td><span class="chip">深主板</span></td>
+<td class="ind">专业服务</td>
+<td class="num">20.87</td><td class="num ">+0.00%</td>
+<td class="num">20.48</td><td class="num">18.94</td>
+<td class="num">17.29</td><td class="num">13.63</td>
+<td class="num">+20.7%</td>
+<td class="num">18.13 / 13.52</td>
+<td class="num">14.52 / 12.88</td>
+</tr><tr>
+<td class="code">300852</td><td class="nm">四会富仕 </td>
+<td><span class="chip">创业板</span></td>
+<td class="ind">电子元件</td>
+<td class="num">76.94</td><td class="num up">+19.99%</td>
+<td class="num">71.13</td><td class="num">70.19</td>
+<td class="num">70.14</td><td class="num">53.43</td>
+<td class="num">+9.7%</td>
+<td class="num">72.95 / 57.56</td>
+<td class="num">60.17 / 44.15</td>
+</tr><tr>
+<td class="code">300199</td><td class="nm">翰宇药业 </td>
+<td><span class="chip">创业板</span></td>
+<td class="ind">医药制造</td>
+<td class="num">26.30</td><td class="num up">+5.50%</td>
+<td class="num">25.24</td><td class="num">24.53</td>
+<td class="num">24.02</td><td class="num">23.32</td>
+<td class="num">+9.5%</td>
+<td class="num">24.36 / 23.37</td>
+<td class="num">23.27 / 20.13</td>
+</tr><tr>
+<td class="code">301122</td><td class="nm">采纳股份 </td>
+<td><span class="chip">创业板</span></td>
+<td class="ind">医疗器械</td>
+<td class="num">65.33</td><td class="num up">+0.63%</td>
+<td class="num">67.19</td><td class="num">66.94</td>
+<td class="num">60.41</td><td class="num">43.90</td>
+<td class="num">+8.1%</td>
+<td class="num">65.83 / 41.70</td>
+<td class="num">46.13 / 30.97</td>
+</tr><tr>
+<td class="code">301132</td><td class="nm">满坤科技 </td>
+<td><span class="chip">创业板</span></td>
+<td class="ind">电子元件</td>
+<td class="num">70.91</td><td class="num up">+3.76%</td>
+<td class="num">70.56</td><td class="num">67.36</td>
+<td class="num">65.87</td><td class="num">45.31</td>
+<td class="num">+7.7%</td>
+<td class="num">69.54 / 47.94</td>
+<td class="num">51.37 / 38.64</td>
+</tr><tr>
+<td class="code">601288</td><td class="nm">农业银行 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">银行</td>
+<td class="num">7.49</td><td class="num up">+3.45%</td>
+<td class="num">7.28</td><td class="num">7.15</td>
+<td class="num">7.02</td><td class="num">6.83</td>
+<td class="num">+6.7%</td>
+<td class="num">7.12 / 6.72</td>
+<td class="num">6.87 / 6.54</td>
+</tr><tr>
+<td class="code">601088</td><td class="nm">中国神华 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">煤炭采选</td>
+<td class="num">51.50</td><td class="num up">+1.02%</td>
+<td class="num">50.62</td><td class="num">49.35</td>
+<td class="num">48.27</td><td class="num">46.70</td>
+<td class="num">+6.7%</td>
+<td class="num">49.08 / 45.74</td>
+<td class="num">46.56 / 41.53</td>
+</tr><tr>
+<td class="code">601225</td><td class="nm">陕西煤业 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">煤炭采选</td>
+<td class="num">28.19</td><td class="num down">-0.32%</td>
+<td class="num">28.02</td><td class="num">27.27</td>
+<td class="num">26.49</td><td class="num">25.84</td>
+<td class="num">+6.4%</td>
+<td class="num">26.95 / 25.23</td>
+<td class="num">25.40 / 22.34</td>
+</tr><tr>
+<td class="code">002172</td><td class="nm">澳洋健康 </td>
+<td><span class="chip">深主板</span></td>
+<td class="ind">医疗服务</td>
+<td class="num">5.77</td><td class="num ">+0.00%</td>
+<td class="num">5.78</td><td class="num">5.68</td>
+<td class="num">5.47</td><td class="num">4.45</td>
+<td class="num">+5.5%</td>
+<td class="num">5.61 / 4.16</td>
+<td class="num">4.30 / 4.05</td>
+</tr><tr>
+<td class="code">001872</td><td class="nm">招商港口 </td>
+<td><span class="chip">深主板</span></td>
+<td class="ind">港口水运</td>
+<td class="num">25.36</td><td class="num up">+2.13%</td>
+<td class="num">25.35</td><td class="num">24.95</td>
+<td class="num">24.06</td><td class="num">23.03</td>
+<td class="num">+5.4%</td>
+<td class="num">24.45 / 22.35</td>
+<td class="num">23.01 / 20.71</td>
+</tr><tr>
+<td class="code">601988</td><td class="nm">中国银行 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">银行</td>
+<td class="num">7.11</td><td class="num up">+2.75%</td>
+<td class="num">7.04</td><td class="num">6.91</td>
+<td class="num">6.76</td><td class="num">6.33</td>
+<td class="num">+5.2%</td>
+<td class="num">6.86 / 6.25</td>
+<td class="num">6.43 / 5.72</td>
+</tr><tr>
+<td class="code">601083</td><td class="nm">锦江航运 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">航运港口</td>
+<td class="num">13.60</td><td class="num down">-0.58%</td>
+<td class="num">13.62</td><td class="num">13.31</td>
+<td class="num">12.93</td><td class="num">12.20</td>
+<td class="num">+5.2%</td>
+<td class="num">13.10 / 11.81</td>
+<td class="num">12.18 / 11.37</td>
+</tr><tr>
+<td class="code">600400</td><td class="nm">红豆股份 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">纺织服装</td>
+<td class="num">3.75</td><td class="num down">-4.09%</td>
+<td class="num">3.98</td><td class="num">3.80</td>
+<td class="num">3.57</td><td class="num">3.15</td>
+<td class="num">+5.1%</td>
+<td class="num">3.61 / 3.14</td>
+<td class="num">3.21 / 2.63</td>
+</tr><tr>
+<td class="code">002832</td><td class="nm">比音勒芬 </td>
+<td><span class="chip">深主板</span></td>
+<td class="ind">纺织服装</td>
+<td class="num">27.31</td><td class="num up">+3.64%</td>
+<td class="num">26.65</td><td class="num">26.56</td>
+<td class="num">25.98</td><td class="num">25.32</td>
+<td class="num">+5.1%</td>
+<td class="num">26.31 / 24.17</td>
+<td class="num">25.05 / 18.39</td>
+</tr><tr>
+<td class="code">601985</td><td class="nm">中国核电 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">电力行业</td>
+<td class="num">9.57</td><td class="num up">+1.48%</td>
+<td class="num">9.39</td><td class="num">9.25</td>
+<td class="num">9.11</td><td class="num">8.98</td>
+<td class="num">+5.1%</td>
+<td class="num">9.22 / 9.03</td>
+<td class="num">9.12 / 8.92</td>
+</tr><tr>
+<td class="code">603976</td><td class="nm">正川股份 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">医疗器械</td>
+<td class="num">32.07</td><td class="num up">+2.95%</td>
+<td class="num">31.81</td><td class="num">30.83</td>
+<td class="num">30.62</td><td class="num">28.96</td>
+<td class="num">+4.7%</td>
+<td class="num">30.66 / 28.32</td>
+<td class="num">29.09 / 22.08</td>
+</tr><tr>
+<td class="code">600674</td><td class="nm">川投能源 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">电力行业</td>
+<td class="num">17.36</td><td class="num down">-0.23%</td>
+<td class="num">17.38</td><td class="num">17.10</td>
+<td class="num">16.58</td><td class="num">15.95</td>
+<td class="num">+4.7%</td>
+<td class="num">16.93 / 15.73</td>
+<td class="num">15.90 / 15.12</td>
+</tr><tr>
+<td class="code">600886</td><td class="nm">国投电力 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">电力行业</td>
+<td class="num">15.83</td><td class="num down">-1.00%</td>
+<td class="num">16.02</td><td class="num">15.79</td>
+<td class="num">15.17</td><td class="num">14.66</td>
+<td class="num">+4.3%</td>
+<td class="num">15.55 / 14.48</td>
+<td class="num">14.67 / 13.99</td>
+</tr><tr>
+<td class="code">600901</td><td class="nm">江苏金租 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">多元金融</td>
+<td class="num">7.22</td><td class="num up">+1.83%</td>
+<td class="num">7.22</td><td class="num">7.10</td>
+<td class="num">6.93</td><td class="num">6.69</td>
+<td class="num">+4.2%</td>
+<td class="num">7.04 / 6.58</td>
+<td class="num">6.60 / 6.06</td>
+</tr><tr>
+<td class="code">601939</td><td class="nm">建设银行 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">银行</td>
+<td class="num">11.57</td><td class="num up">+1.05%</td>
+<td class="num">11.45</td><td class="num">11.28</td>
+<td class="num">11.10</td><td class="num">10.73</td>
+<td class="num">+4.2%</td>
+<td class="num">11.24 / 10.57</td>
+<td class="num">10.82 / 9.46</td>
+</tr><tr>
+<td class="code">601398</td><td class="nm">工商银行 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">银行</td>
+<td class="num">8.60</td><td class="num up">+1.42%</td>
+<td class="num">8.50</td><td class="num">8.39</td>
+<td class="num">8.26</td><td class="num">7.97</td>
+<td class="num">+4.1%</td>
+<td class="num">8.36 / 7.82</td>
+<td class="num">8.00 / 7.42</td>
+</tr><tr>
+<td class="code">301081</td><td class="nm">严牌股份 </td>
+<td><span class="chip">创业板</span></td>
+<td class="ind">环保工程</td>
+<td class="num">18.59</td><td class="num up">+2.09%</td>
+<td class="num">18.82</td><td class="num">18.78</td>
+<td class="num">17.89</td><td class="num">14.66</td>
+<td class="num">+3.9%</td>
+<td class="num">18.07 / 14.86</td>
+<td class="num">15.24 / 12.61</td>
+</tr><tr>
+<td class="code">601598</td><td class="nm">中国外运 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">交运物流</td>
+<td class="num">6.89</td><td class="num up">+2.99%</td>
+<td class="num">6.77</td><td class="num">6.75</td>
+<td class="num">6.63</td><td class="num">6.52</td>
+<td class="num">+3.9%</td>
+<td class="num">6.67 / 6.22</td>
+<td class="num">6.36 / 5.78</td>
+</tr><tr>
+<td class="code">603980</td><td class="nm">吉华集团 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">化工行业</td>
+<td class="num">9.31</td><td class="num down">-6.90%</td>
+<td class="num">9.98</td><td class="num">9.58</td>
+<td class="num">8.99</td><td class="num">7.60</td>
+<td class="num">+3.6%</td>
+<td class="num">9.06 / 7.30</td>
+<td class="num">7.76 / 6.13</td>
+</tr><tr>
+<td class="code">600025</td><td class="nm">华能水电 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">电力行业</td>
+<td class="num">10.28</td><td class="num down">-0.10%</td>
+<td class="num">10.32</td><td class="num">10.17</td>
+<td class="num">9.95</td><td class="num">9.86</td>
+<td class="num">+3.3%</td>
+<td class="num">10.08 / 9.75</td>
+<td class="num">9.75 / 9.45</td>
+</tr><tr>
+<td class="code">600900</td><td class="nm">长江电力 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">电力行业</td>
+<td class="num">29.54</td><td class="num up">+0.54%</td>
+<td class="num">29.42</td><td class="num">29.13</td>
+<td class="num">28.74</td><td class="num">28.49</td>
+<td class="num">+2.8%</td>
+<td class="num">28.99 / 28.22</td>
+<td class="num">28.35 / 27.52</td>
+</tr><tr>
+<td class="code">300981</td><td class="nm">中红医疗 </td>
+<td><span class="chip">创业板</span></td>
+<td class="ind">医疗器械</td>
+<td class="num">19.47</td><td class="num up">+2.31%</td>
+<td class="num">21.00</td><td class="num">20.83</td>
+<td class="num">19.02</td><td class="num">15.97</td>
+<td class="num">+2.3%</td>
+<td class="num">19.81 / 14.78</td>
+<td class="num">15.88 / 13.44</td>
+</tr><tr>
+<td class="code">002860</td><td class="nm">星帅尔 </td>
+<td><span class="chip">深主板</span></td>
+<td class="ind">家电行业</td>
+<td class="num">17.67</td><td class="num down">-2.70%</td>
+<td class="num">18.55</td><td class="num">17.41</td>
+<td class="num">17.28</td><td class="num">16.91</td>
+<td class="num">+2.2%</td>
+<td class="num">17.41 / 16.09</td>
+<td class="num">16.93 / 14.09</td>
+</tr><tr>
+<td class="code">601998</td><td class="nm">中信银行 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">银行</td>
+<td class="num">9.26</td><td class="num up">+1.87%</td>
+<td class="num">9.19</td><td class="num">9.14</td>
+<td class="num">9.06</td><td class="num">8.44</td>
+<td class="num">+2.2%</td>
+<td class="num">9.12 / 8.18</td>
+<td class="num">8.39 / 7.72</td>
+</tr><tr>
+<td class="code">600177</td><td class="nm">雅戈尔 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">纺织服装</td>
+<td class="num">8.51</td><td class="num up">+0.71%</td>
+<td class="num">8.52</td><td class="num">8.45</td>
+<td class="num">8.36</td><td class="num">8.06</td>
+<td class="num">+1.8%</td>
+<td class="num">8.41 / 7.97</td>
+<td class="num">8.06 / 7.41</td>
+</tr><tr>
+<td class="code">301372</td><td class="nm">科净源 </td>
+<td><span class="chip">创业板</span></td>
+<td class="ind">环保行业</td>
+<td class="num">34.00</td><td class="num up">+5.26%</td>
+<td class="num">33.45</td><td class="num">33.43</td>
+<td class="num">33.42</td><td class="num">30.81</td>
+<td class="num">+1.7%</td>
+<td class="num">33.79 / 31.68</td>
+<td class="num">31.32 / 27.98</td>
+</tr><tr>
+<td class="code">301041</td><td class="nm">金百泽 </td>
+<td><span class="chip">创业板</span></td>
+<td class="ind">电子元件</td>
+<td class="num">36.13</td><td class="num down">-0.47%</td>
+<td class="num">38.53</td><td class="num">37.47</td>
+<td class="num">36.53</td><td class="num">29.11</td>
+<td class="num">-1.1%</td>
+<td class="num">37.71 / 30.86</td>
+<td class="num">31.52 / 28.54</td>
+</tr><tr>
+<td class="code">300845</td><td class="nm">捷安高科 </td>
+<td><span class="chip">创业板</span></td>
+<td class="ind">软件服务</td>
+<td class="num">13.71</td><td class="num down">-2.28%</td>
+<td class="num">14.19</td><td class="num">14.16</td>
+<td class="num">13.97</td><td class="num">12.48</td>
+<td class="num">-1.9%</td>
+<td class="num">14.05 / 12.90</td>
+<td class="num">12.94 / 11.79</td>
+</tr><tr>
+<td class="code">688004</td><td class="nm">博汇科技 </td>
+<td><span class="chip">科创板</span></td>
+<td class="ind">互联网服务</td>
+<td class="num">30.99</td><td class="num down">-6.18%</td>
+<td class="num">35.56</td><td class="num">33.64</td>
+<td class="num">32.89</td><td class="num">25.48</td>
+<td class="num">-5.8%</td>
+<td class="num">31.43 / 23.98</td>
+<td class="num">24.92 / 23.35</td>
+</tr><tr>
+<td class="code">600593</td><td class="nm">大连圣亚 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">旅游酒店</td>
+<td class="num">43.17</td><td class="num down">-10.01%</td>
+<td class="num">48.55</td><td class="num">48.19</td>
+<td class="num">46.56</td><td class="num">41.88</td>
+<td class="num">-7.3%</td>
+<td class="num">47.60 / 41.38</td>
+<td class="num">41.43 / 38.07</td>
+</tr><tr>
+<td class="code">603067</td><td class="nm">振华股份 </td>
+<td><span class="chip">沪主板</span></td>
+<td class="ind">化学原料</td>
+<td class="num">34.53</td><td class="num down">-9.13%</td>
+<td class="num">40.37</td><td class="num">40.36</td>
+<td class="num">38.72</td><td class="num">35.42</td>
+<td class="num">-10.8%</td>
+<td class="num">39.10 / 36.89</td>
+<td class="num">37.56 / 27.72</td>
+</tr></tbody></table>
+<div class="foot">板块构成：沪主板 24 · 创业板 11 · 深主板 6 · 科创板 1<br>
+已剔除 ST 与当日停牌；上市不足约 2 年（月线 &lt; 20 根）不参与。按「偏离 MA20」从高到低排序，偏离越大越偏向短期强势。<br>
+均线采用不复权收盘价（库内原始口径），除权日附近均线可能失真，请结合复权行情复核。</div>
+</div></body></html>

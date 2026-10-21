@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自选股票 · 蚂蚁量化系统</title>
+<style>
+  :root{--up:#E03131;--down:#2F9E44;--brand:#0969DA;--ink:#1A1D24;--ink2:#5B6270;--ink3:#8A8F99;--line:#E7E9EE;--bg:#F4F5F7;--card:#FFFFFF;--shadow:0 1px 2px rgba(16,24,40,.04),0 1px 3px rgba(16,24,40,.06);--radius:14px;--mono:"SF Mono",ui-monospace,Menlo,monospace}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:var(--bg);font-size:14px;line-height:1.5}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .app{display:grid;grid-template-columns:228px 1fr;min-height:100vh}
+  .sidebar{background:#0E2A52;color:#D6E4F5;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+  .brand{display:flex;align-items:center;gap:10px;padding:20px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .brand .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#1C7ED6,#4DABF7);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
+  .brand .name{font-size:16px;font-weight:700;color:#fff}
+  .brand .sub{font-size:11px;color:#8FA9C9;margin-top:1px}
+  .nav{padding:12px 10px;flex:1;overflow-y:auto}
+  .nav a{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:#C7D8EC;text-decoration:none;font-size:14px;margin-bottom:2px}
+  .nav a:hover{background:rgba(255,255,255,.07);color:#fff}
+  .nav a.active{background:#1C7ED6;color:#fff;font-weight:600}
+  .sidebar .foot{padding:14px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;color:#7E97B8}
+  .main{display:flex;flex-direction:column;min-width:0}
+  .topbar{height:60px;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;padding:0 24px;position:sticky;top:0;z-index:10}
+  .topbar .crumb{font-size:15px;font-weight:650}
+  .btn{border:1px solid var(--line);background:var(--card);border-radius:9px;padding:7px 14px;font-size:13px;color:var(--ink2);cursor:pointer}
+  .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600}
+  .btn:hover{background:var(--bg)}
+  .btn.primary:hover{opacity:.9}
+  .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#4DABF7,#37B24D);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+  .content{padding:22px 24px 40px;max-width:1380px;width:100%;margin:0 auto}
+  .page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .page-head h1{font-size:20px;font-weight:700}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px}
+  .panel .hd{display:flex;align-items:center;justify-content:space-between;padding:13px 16px 10px;border-bottom:1px solid var(--line)}
+  .panel .hd .t{font-size:14px;font-weight:650}
+  .panel .bd{padding:12px 16px 14px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;font-weight:600;color:var(--ink3);font-size:12px;padding:8px 10px;border-bottom:1px solid var(--line)}
+  td{padding:8px 10px;border-bottom:1px solid #F0F2F5;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .num{text-align:right}
+  .up{color:var(--up)} .down{color:var(--down)} .flat{color:var(--ink3)}
+  .loading{text-align:center;padding:40px;color:var(--ink3)}
+  .empty{text-align:center;padding:60px 20px;color:var(--ink3)}
+  .empty .icon{font-size:48px;margin-bottom:12px}
+  .search-row{display:flex;gap:10px;align-items:center;margin-bottom:16px}
+  .search-row input{flex:1;height:40px;border:1px solid var(--line);border-radius:10px;padding:0 14px;font-size:14px;outline:none}
+  .search-row input:focus{border-color:var(--brand)}
+  .clickable{cursor:pointer}
+  .clickable:hover td{background:#F8F9FB}
+  .del-btn{color:var(--ink3);cursor:pointer;font-size:16px;padding:2px 6px;border-radius:4px}
+  .del-btn:hover{background:#FFE3E3;color:var(--up)}
+  .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center}
+  .modal-overlay.show{display:flex}
+  .modal{background:var(--card);border-radius:16px;padding:24px;width:400px;max-width:90vw}
+  .modal h3{font-size:16px;margin-bottom:16px}
+  .modal .field{margin-bottom:12px}
+  .modal .field label{display:block;font-size:12px;color:var(--ink3);margin-bottom:4px}
+  .modal .field input{width:100%;height:38px;border:1px solid var(--line);border-radius:8px;padding:0 12px;font-size:14px;outline:none}
+  .modal .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">Q</div><div><div class="name">蚂蚁量化系统</div><div class="sub">个人量化交易平台</div></div></div>
+    <nav class="nav">
+      <a href="/"><span>📊</span>总览首页</a>
+      <a href="/positions"><span>💼</span>持仓管理</a>
+      <a href="/market"><span>🌍</span>市场洞察</a>
+      <a href="/strategies"><span>📈</span>策略管理</a>
+      <a href="/scan"><span>🔍</span>策略选股</a>
+      <a href="/data"><span>💾</span>数据中心</a>
+      <a href="/trades"><span>📋</span>交易记录</a>
+      <a href="/paper"><span>🎮</span>模拟交易</a>
+      <a class="active" href="/watchlist"><span>⭐</span>自选股票</a>
+      <a href="/sequoia"><span>🎯</span>Sequoia选股</a>
+    </nav>
+    <div class="foot"><div>数据源：AKShare</div></div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <span class="crumb">自选股票</span>
+      <div style="flex:1"></div>
+      <div class="avatar">乔</div>
+    </div>
+
+    <div class="content">
+      <div class="page-head">
+        <h1>自选股票</h1>
+        <div style="display:flex;gap:10px">
+          <button class="btn primary" onclick="generateReports()">生成报告</button>
+          <button class="btn primary" onclick="showAddModal()">+ 添加股票</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="hd"><span class="t">我的自选</span><button class="btn" onclick="loadWatchlist()">刷新</button></div>
+        <div class="bd" id="watchlistBody">
+          <div class="loading">加载中...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 添加自选弹窗 -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <h3>添加自选股票</h3>
+    <div class="field">
+      <label>搜索股票（代码或名称）</label>
+      <input type="text" id="searchInput" placeholder="输入代码或名称搜索" oninput="doSearch()">
+    </div>
+    <div id="searchResults" style="max-height:200px;overflow-y:auto;margin-bottom:12px;display:none;border:1px solid var(--line);border-radius:8px"></div>
+    <div class="field">
+      <label>选中的股票</label>
+      <input type="text" id="addSymbol" placeholder="从搜索结果中选择" readonly style="background:#f5f5f5">
+    </div>
+    <div class="field">
+      <label>备注（可选）</label>
+      <input type="text" id="addNotes" placeholder="添加备注">
+    </div>
+    <div class="actions">
+      <button class="btn" onclick="closeAddModal()">取消</button>
+      <button class="btn primary" onclick="doAdd()">确认添加</button>
+    </div>
+  </div>
+</div>
+
+<style>
+.search-item{padding:10px 12px;cursor:pointer;border-bottom:1px solid #f0f0f0;display:flex;justify-content:space-between;align-items:center}
+.search-item:hover{background:#f8f9fa}
+.search-item:last-child{border-bottom:none}
+.search-item .code{font-family:var(--mono);font-weight:600;color:var(--ink)}
+.search-item .name{color:var(--ink2);font-size:13px}
+.search-item .industry{color:var(--ink3);font-size:12px}
+.rating-badge{padding:2px 8px;border-radius:20px;font-size:12px;font-weight:600;display:inline-block}
+.rating-buy{background:#FDEBEB;color:#E03131}
+.rating-sell{background:#E9F7EE;color:#2F9E44}
+.rating-hold{background:#F1F3F5;color:#5B6270}
+</style>
+
+<script src="/static/js/api.js"></script>
+<script>
+async function loadWatchlist() {
+  var el = document.getElementById('watchlistBody');
+  el.innerHTML = '<div class="loading">加载中...</div>';
+  try {
+    var list = await api.getWatchlist();
+    if (!list || !list.length) {
+      el.innerHTML = '<div class="empty"><div class="icon">⭐</div><p>暂无自选股票，点击右上角添加</p></div>';
+      return;
+    }
+    var html = '<table><thead><tr><th>代码</th><th>名称</th><th class="num">最新价</th><th class="num">涨跌幅</th><th class="num">成交额(亿)</th><th class="num">压力位</th><th class="num">支撑位</th><th>评级</th><th>报告</th><th>评级日期</th><th>备注</th><th>加入自选</th><th></th></tr></thead><tbody>';
+    list.forEach(function(item) {
+      var cls = signCls(item.change_pct);
+      var pctStr = (item.change_pct >= 0 ? '+' : '') + fmt(item.change_pct) + '%';
+      var amount = item.amount ? fmt(item.amount / 100000000, 2) : '--';
+      html += '<tr class="clickable" onclick="goDetail(\'' + item.symbol + '\')">';
+      html += '<td class="mono">' + item.symbol + '</td>';
+      html += '<td style="font-weight:600">' + (item.name || '--') + '</td>';
+      html += '<td class="num mono ' + cls + '">' + fmt(item.price) + '</td>';
+      html += '<td class="num mono ' + cls + '">' + pctStr + '</td>';
+      html += '<td class="num mono">' + amount + '</td>';
+      html += '<td class="num mono">' + (item.target_price ? fmt(item.target_price) : '--') + '</td>';
+      html += '<td class="num mono">' + (item.stop_loss ? fmt(item.stop_loss) : '--') + '</td>';
+      html += '<td>' + (item.rating ? '<span class="rating-badge ' + ratingCls(item.rating) + '">' + item.rating + '</span>' : '--') + '</td>';
+      html += '<td>' + (item.report ? '<a href="/api/watchlist/' + item.id + '/report" target="_blank" onclick="event.stopPropagation()">查看</a>' : '--') + '</td>';
+      html += '<td style="color:var(--ink3)">' + (item.rating_date || '--') + '</td>';
+      html += '<td style="color:var(--ink3);max-width:120px;overflow:hidden;text-overflow:ellipsis">' + (item.notes || '--') + '</td>';
+      html += '<td style="color:var(--ink3)">' + (item.added_at ? item.added_at.slice(0, 10) : '--') + '</td>';
+      html += '<td><span class="del-btn" onclick="event.stopPropagation();doRemove(' + item.id + ')">✕</span></td>';
+      html += '</tr>';
+    });
+    html += '</tbody></table>';
+    el.innerHTML = html;
+  } catch (e) {
+    el.innerHTML = '<div class="empty">加载失败: ' + e.message + '</div>';
+  }
+}
+
+function goDetail(symbol) {
+  window.location.href = '/stock/' + symbol;
+}
+
+function showAddModal() {
+  document.getElementById('addModal').classList.add('show');
+  document.getElementById('searchInput').focus();
+}
+
+function closeAddModal() {
+  document.getElementById('addModal').classList.remove('show');
+  document.getElementById('searchInput').value = '';
+  document.getElementById('addSymbol').value = '';
+  document.getElementById('addNotes').value = '';
+  document.getElementById('searchResults').style.display = 'none';
+  document.getElementById('searchResults').innerHTML = '';
+}
+
+let searchTimer = null;
+async function doSearch() {
+  clearTimeout(searchTimer);
+  const keyword = document.getElementById('searchInput').value.trim();
+  const resultsEl = document.getElementById('searchResults');
+
+  if (!keyword) {
+    resultsEl.style.display = 'none';
+    resultsEl.innerHTML = '';
+    return;
+  }
+
+  // 防抖 300ms
+  searchTimer = setTimeout(async () => {
+    try {
+      const res = await fetch('/api/watchlist/search?keyword=' + encodeURIComponent(keyword));
+      const data = await res.json();
+      const stocks = data.stocks || [];
+
+      if (stocks.length === 0) {
+        resultsEl.innerHTML = '<div style="padding:12px;color:var(--ink3);text-align:center">未找到相关股票</div>';
+        resultsEl.style.display = 'block';
+        return;
+      }
+
+      resultsEl.innerHTML = stocks.map(s =>
+        '<div class="search-item" onclick="selectStock(\'' + s.symbol + '\', \'' + (s.name || '') + '\')">' +
+          '<div><span class="code">' + s.symbol + '</span> <span class="name">' + (s.name || '') + '</span></div>' +
+          '<span class="industry">' + (s.industry || '') + '</span>' +
+        '</div>'
+      ).join('');
+      resultsEl.style.display = 'block';
+    } catch (e) {
+      resultsEl.innerHTML = '<div style="padding:12px;color:var(--up);text-align:center">搜索失败</div>';
+      resultsEl.style.display = 'block';
+    }
+  }, 300);
+}
+
+function selectStock(symbol, name) {
+  document.getElementById('addSymbol').value = symbol + ' - ' + name;
+  document.getElementById('addSymbol').dataset.symbol = symbol;
+  document.getElementById('searchResults').style.display = 'none';
+  document.getElementById('searchInput').value = '';
+}
+
+async function doAdd() {
+  const symbolInput = document.getElementById('addSymbol');
+  const symbol = symbolInput.dataset.symbol || symbolInput.value.split(' - ')[0];
+  if (!symbol) { alert('请先搜索并选择股票'); return; }
+  try {
+    const res = await api.addToWatchlist({
+      symbol: symbol,
+      name: symbolInput.value.split(' - ')[1] || '',
+      notes: document.getElementById('addNotes').value.trim(),
+    });
+    if (res.error) { alert(res.error); return; }
+    closeAddModal();
+    loadWatchlist();
+  } catch (e) {
+    alert('添加失败: ' + e.message);
+  }
+}
+
+async function doRemove(id) {
+  if (!confirm('确定从自选中移除？')) return;
+  try {
+    await api.removeFromWatchlist(id);
+    loadWatchlist();
+  } catch (e) {
+    alert('删除失败: ' + e.message);
+  }
+}
+
+function ratingCls(r) {
+  var s = (r || '').toLowerCase();
+  if (s.indexOf('buy') >= 0 || s.indexOf('overweight') >= 0) return 'rating-buy';
+  if (s.indexOf('sell') >= 0 || s.indexOf('underweight') >= 0) return 'rating-sell';
+  return 'rating-hold';
+}
+
+let reportTaskTimer = null;
+async function generateReports() {
+  if (!confirm('将为所有自选股调用 TradingAgents 生成 AI 报告，每只耗时数分钟，是否继续？')) return;
+  try {
+    const res = await api.generateWatchlistReports();
+    pollReportTask(res.task_id);
+  } catch (e) {
+    alert('启动失败: ' + e.message);
+  }
+}
+
+function pollReportTask(taskId) {
+  clearInterval(reportTaskTimer);
+  reportTaskTimer = setInterval(async () => {
+    try {
+      const task = await api.getAiTask(taskId);
+      if (task.status === 'completed') {
+        clearInterval(reportTaskTimer);
+        const errCount = (task.errors || []).length;
+        alert(errCount > 0 ? ('报告生成完成，' + errCount + ' 只失败（详见列表中未更新评级的股票）') : '报告生成完成');
+        loadWatchlist();
+      } else if (task.status === 'failed') {
+        clearInterval(reportTaskTimer);
+        alert('报告生成失败: ' + (task.error || '未知错误'));
+      }
+    } catch (e) {
+      clearInterval(reportTaskTimer);
+    }
+  }, 3000);
+}
+
+document.getElementById('searchInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    // 如果有搜索结果，选择第一个
+    const firstItem = document.querySelector('.search-item');
+    if (firstItem) firstItem.click();
+  }
+});
+
+loadWatchlist();
+</script>
+</body>
+</html>

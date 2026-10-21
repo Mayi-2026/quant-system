@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>蚂蚁量化系统 · Sequoia 选股</title>
+<style>
+  :root{--up:#E03131;--down:#2F9E44;--flat:#8A8F99;--brand:#0969DA;--ink:#1A1D24;--ink2:#5B6270;--ink3:#8A8F99;--line:#E7E9EE;--bg:#F4F5F7;--card:#FFFFFF;--bg-soft:#F7F9FC;--shadow:0 1px 2px rgba(16,24,40,.04),0 1px 3px rgba(16,24,40,.06);--radius:14px;--mono:"SF Mono",ui-monospace,Menlo,monospace}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:var(--bg);font-size:14px;line-height:1.5}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .app{display:grid;grid-template-columns:228px 1fr;min-height:100vh}
+  .sidebar{background:#0E2A52;color:#D6E4F5;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+  .brand{display:flex;align-items:center;gap:10px;padding:20px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .brand .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#1C7ED6,#4DABF7);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
+  .brand .name{font-size:16px;font-weight:700;color:#fff}
+  .brand .sub{font-size:11px;color:#8FA9C9;margin-top:1px}
+  .nav{padding:12px 10px;flex:1;overflow-y:auto}
+  .nav a{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:#C7D8EC;text-decoration:none;font-size:14px;margin-bottom:2px}
+  .nav a:hover{background:rgba(255,255,255,.07);color:#fff}
+  .nav a.active{background:#1C7ED6;color:#fff;font-weight:600}
+  .sidebar .foot{padding:14px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;color:#7E97B8}
+  .sidebar .foot .row{display:flex;justify-content:space-between;margin-bottom:6px}
+  .sidebar .foot .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#12B886;margin-right:5px}
+  .main{display:flex;flex-direction:column;min-width:0}
+  .topbar{height:60px;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;padding:0 24px;position:sticky;top:0;z-index:10}
+  .topbar .crumb{font-size:15px;font-weight:650}
+  .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#4DABF7,#37B24D);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;margin-left:auto}
+  .content{padding:22px 24px 40px;max-width:1380px;width:100%;margin:0 auto}
+  .page-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:12px}
+  .page-head h1{font-size:20px;font-weight:700}
+  .page-head .desc{font-size:13px;color:var(--ink3);margin-top:3px}
+  .btn{border:1px solid var(--line);background:var(--card);border-radius:9px;padding:8px 16px;font-size:13px;color:var(--ink2);cursor:pointer}
+  .btn:disabled{opacity:.55;cursor:not-allowed}
+  .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600}
+  .btn.danger{background:var(--up);border-color:var(--up);color:#fff;font-weight:600}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:16px}
+  .panel .hd{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line)}
+  .panel .hd .t{font-size:14px;font-weight:650}
+  .panel .bd{padding:16px 18px}
+  .cards{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 18px}
+  .card .k{font-size:12px;color:var(--ink3);margin-bottom:6px;font-weight:600}
+  .card .v{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+  .card .meta{font-size:12px;color:var(--ink3);margin-top:4px;font-variant-numeric:tabular-nums}
+  .statline{display:flex;gap:28px;flex-wrap:wrap;font-size:13px}
+  .statline .it{display:flex;flex-direction:column;gap:2px}
+  .statline .it .k{font-size:12px;color:var(--ink3)}
+  .statline .it .v{font-weight:600;font-variant-numeric:tabular-nums}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;font-weight:600;color:var(--ink3);font-size:12px;padding:9px 12px;border-bottom:1px solid var(--line)}
+  td{padding:9px 12px;border-bottom:1px solid #F0F2F5;vertical-align:top}
+  .num{text-align:right}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{display:inline-block;padding:2px 9px;border-radius:7px;font-size:12px;background:var(--bg-soft);border:1px solid var(--line);color:var(--ink2);font-family:var(--mono)}
+  .empty{text-align:center;color:var(--ink3);padding:28px}
+  .loading{text-align:center;color:var(--ink3);padding:28px}
+  .note{font-size:12px;color:var(--ink3);line-height:1.7;background:var(--bg-soft);border-radius:10px;padding:12px 14px}
+  @media(max-width:960px){.app{grid-template-columns:1fr}.sidebar{display:none}.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">Q</div>
+      <div><div class="name">蚂蚁量化系统</div><div class="sub">个人量化交易平台</div></div>
+    </div>
+    <nav class="nav">
+      <a href="/"><span>📊</span>总览首页</a>
+      <a href="/positions"><span>💼</span>持仓管理</a>
+      <a href="/market"><span>🌍</span>市场洞察</a>
+      <a href="/strategies"><span>📈</span>策略管理</a>
+      <a href="/scan"><span>🔍</span>策略选股</a>
+      <a href="/data"><span>💾</span>数据中心</a>
+      <a href="/trades"><span>📋</span>交易记录</a>
+      <a href="/paper"><span>🎮</span>模拟交易</a>
+      <a href="/watchlist"><span>⭐</span>自选股票</a>
+      <a class="active" href="/sequoia"><span>🎯</span>Sequoia选股</a>
+    </nav>
+    <div class="foot">
+      <div class="row"><span>行情数据</span><span class="mono"><span class="dot"></span>已连接</span></div>
+      <div class="row"><span>数据源</span><span class="mono">AKShare</span></div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <span class="crumb">Sequoia 选股</span>
+      <div class="avatar">乔</div>
+    </div>
+
+    <div class="content">
+      <div class="page-head">
+        <div>
+          <h1>Sequoia-X 选股系统</h1>
+          <div class="desc">7 个 A 股交易策略 · 数据来自量化系统 market_data（同步一份到 sequoia_v2.db）</div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn" id="btnSync" onclick="doSync('recent')">同步最近30天</button>
+          <button class="btn" id="btnSyncAll" onclick="doSync('all')">全量同步</button>
+          <button class="btn danger" id="btnRun" onclick="doRun()">运行选股策略</button>
+        </div>
+      </div>
+
+      <div class="cards">
+        <div class="card">
+          <div class="k">量化系统 · quant.db</div>
+          <div class="v" id="quantRows">--</div>
+          <div class="meta" id="quantMeta">market_data 行数</div>
+        </div>
+        <div class="card">
+          <div class="k">Sequoia · sequoia_v2.db</div>
+          <div class="v" id="seqRows">--</div>
+          <div class="meta" id="seqMeta">stock_daily 行数</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="hd"><span class="t">数据同步状态</span></div>
+        <div class="bd" id="statusBody"><div class="loading">加载中...</div></div>
+      </div>
+
+      <div class="panel">
+        <div class="hd"><span class="t">选股结果</span><span style="font-size:12px;color:var(--ink3)" id="runMeta"></span></div>
+        <div class="bd" id="resultBody"><div class="empty">点击右上角「运行选股策略」开始</div></div>
+      </div>
+
+      <div class="note">
+        <b>说明</b>：量化系统更新行情时会自动同步一份到 Sequoia（增量最近 30 天）。策略运行在独立 Python 子进程（Sequoia-X/.venv）中，首次全量同步约 600 万条历史行情，耗时视机器而定，请耐心等待。
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/api.js"></script>
+<script>
+async function loadStatus() {
+  try {
+    const s = await api.getSequoiaStatus();
+    document.getElementById('quantRows').textContent = s.quant && s.quant.exists ? fmt(s.quant.rows, 0) : '--';
+    document.getElementById('quantMeta').textContent = s.quant && s.quant.exists
+      ? (s.quant.min_date || '-') + ' ~ ' + (s.quant.max_date || '-') + ' · ' + (s.quant.symbols ?? '--') + ' 只标的'
+      : 'quant.db 不存在';
+    document.getElementById('seqRows').textContent = s.sequoia && s.sequoia.exists ? fmt(s.sequoia.rows, 0) : '--';
+    document.getElementById('seqMeta').textContent = s.sequoia && s.sequoia.exists
+      ? (s.sequoia.min_date || '-') + ' ~ ' + (s.sequoia.max_date || '-') + ' · ' + (s.sequoia.symbols ?? '--') + ' 只标的'
+      : 'sequoia_v2.db 尚未生成';
+
+    let html = '<div class="statline">';
+    html += stat('quant 行数', s.quant.exists ? fmt(s.quant.rows, 0) : '--');
+    html += stat('quant 日期范围', s.quant.exists ? ((s.quant.min_date || '-') + ' ~ ' + (s.quant.max_date || '-')) : '--');
+    html += stat('sequoia 行数', s.sequoia.exists ? fmt(s.sequoia.rows, 0) : '--');
+    html += stat('sequoia 日期范围', s.sequoia.exists ? ((s.sequoia.min_date || '-') + ' ~ ' + (s.sequoia.max_date || '-')) : '--');
+    html += stat('sequoia 标的数', s.sequoia.exists && s.sequoia.symbols != null ? fmt(s.sequoia.symbols, 0) : '--');
+    html += '</div>';
+    document.getElementById('statusBody').innerHTML = html;
+  } catch (e) {
+    document.getElementById('statusBody').innerHTML = '<div class="empty">加载失败：' + e.message + '</div>';
+  }
+}
+
+function stat(k, v) {
+  return '<div class="it"><span class="k">' + k + '</span><span class="v">' + v + '</span></div>';
+}
+
+async function doSync(mode) {
+  const btn = mode === 'all' ? document.getElementById('btnSyncAll') : document.getElementById('btnSync');
+  btn.disabled = true;
+  const original = btn.textContent;
+  btn.textContent = '同步中...';
+  try {
+    const r = await api.syncSequoia(mode, 30);
+    alert((mode === 'all' ? '全量同步' : '增量同步') + '完成，写入 ' + (r.synced ?? 0) + ' 条');
+    await loadStatus();
+  } catch (e) {
+    alert('同步失败：' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = original;
+  }
+}
+
+async function doRun() {
+  const btn = document.getElementById('btnRun');
+  btn.disabled = true;
+  btn.textContent = '运行中...';
+  document.getElementById('resultBody').innerHTML = '<div class="loading">策略运行中，请耐心等待（最长 15 分钟）...</div>';
+  document.getElementById('runMeta').textContent = '';
+  const startTs = Date.now();
+  try {
+    const r = await api.runSequoia();
+    if (r.status === 'error') {
+      document.getElementById('resultBody').innerHTML = '<div class="empty">运行失败：' + (r.message || '未知错误') + '</div>';
+      document.getElementById('runMeta').textContent = new Date().toLocaleTimeString();
+      return;
+    }
+    // status 为 started 或 running：轮询直到后台子进程结束
+    await pollRun(btn, startTs);
+  } catch (e) {
+    document.getElementById('resultBody').innerHTML = '<div class="empty">运行失败：' + e.message + '</div>';
+    btn.disabled = false;
+    btn.textContent = '运行选股策略';
+  }
+}
+
+function pollRun(btn, startTs) {
+  const refreshMeta = function() {
+    const secs = Math.floor((Date.now() - startTs) / 1000);
+    document.getElementById('runMeta').textContent = '已运行 ' + secs + ' 秒';
+  };
+  const timer = setInterval(async function() {
+    refreshMeta();
+    let s;
+    try {
+      s = await api.getSequoiaRunStatus();
+    } catch (e) {
+      return; // 暂时拿不到状态，下轮再试
+    }
+    if (s.running) return;
+    clearInterval(timer);
+    btn.disabled = false;
+    btn.textContent = '运行选股策略';
+    if (s.status === 'success') {
+      renderResults(s.results);
+      document.getElementById('runMeta').textContent = '完成于 ' + (s.finished_at || new Date().toLocaleTimeString());
+    } else {
+      document.getElementById('resultBody').innerHTML = '<div class="empty">运行失败：' + (s.message || '未知错误') + '</div>';
+      document.getElementById('runMeta').textContent = '结束于 ' + (s.finished_at || new Date().toLocaleTimeString());
+    }
+  }, 3000);
+}
+
+function renderResults(results) {
+  if (!results || !results.length) {
+    document.getElementById('resultBody').innerHTML = '<div class="empty">无结果</div>';
+    return;
+  }
+  let total = 0;
+  const rows = results.map(function(r) {
+    total += r.count || 0;
+    const chips = (r.symbols || []).map(function(s) { return '<span class="chip">' + s + '</span>'; }).join('');
+    return '<tr><td><b>' + r.strategy + '</b>' + (r.error ? '<div style="color:var(--up);font-size:12px;margin-top:2px">' + r.error + '</div>' : '') + '</td><td class="num">' + (r.count || 0) + '</td><td><div class="chips">' + (chips || '<span style="color:var(--ink3)">—</span>') + '</div></td></tr>';
+  }).join('');
+  document.getElementById('resultBody').innerHTML =
+    '<table><thead><tr><th>策略</th><th class="num">命中数</th><th>标的</th></tr></thead><tbody>' +
+    rows +
+    '<tr><td><b>合计</b></td><td class="num"><b>' + total + '</b></td><td></td></tr></tbody></table>';
+}
+
+loadStatus();
+</script>
+</body></html>

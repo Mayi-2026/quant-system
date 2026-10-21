@@ -1,0 +1,47 @@
+{
+  "tested_at": "2026-10-13T22:20:22.082889",
+  "symbol": "600519",
+  "range": [
+    "2020-01-01",
+    "2026-10-13"
+  ],
+  "results": {
+    "eastmoney": {
+      "kline": {
+        "ok": true,
+        "count": 1640,
+        "seconds": 0.85
+      },
+      "realtime": {
+        "ok": true,
+        "count": 3,
+        "seconds": 0.5
+      },
+      "all_spot": {
+        "ok": true,
+        "count": 5923,
+        "seconds": 33.77
+      },
+      "ok": true
+    },
+    "tencent": {
+      "ok": true,
+      "count": 4,
+      "seconds": 0.85
+    },
+    "sina": {
+      "ok": true,
+      "count": 2,
+      "seconds": 0.4
+    },
+    "akshare": {
+      "ok": true,
+      "count": 1640,
+      "seconds": 0.84
+    },
+    "baostock": {
+      "ok": false,
+      "note": "短区间查询亦超时，确认限流"
+    }
+  }
+}

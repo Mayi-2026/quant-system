@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>交易记录 · 蚂蚁量化系统</title>
+<style>
+  :root{--up:#E03131;--down:#2F9E44;--brand:#0969DA;--ink:#1A1D24;--ink2:#5B6270;--ink3:#8A8F99;--line:#E7E9EE;--bg:#F4F5F7;--card:#FFFFFF;--shadow:0 1px 2px rgba(16,24,40,.04),0 1px 3px rgba(16,24,40,.06);--radius:14px;--mono:"SF Mono",ui-monospace,Menlo,monospace}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:var(--bg);font-size:14px;line-height:1.5}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .app{display:grid;grid-template-columns:228px 1fr;min-height:100vh}
+  .sidebar{background:#0E2A52;color:#D6E4F5;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+  .brand{display:flex;align-items:center;gap:10px;padding:20px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .brand .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#1C7ED6,#4DABF7);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
+  .brand .name{font-size:16px;font-weight:700;color:#fff}
+  .brand .sub{font-size:11px;color:#8FA9C9;margin-top:1px}
+  .nav{padding:12px 10px;flex:1;overflow-y:auto}
+  .nav a{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:#C7D8EC;text-decoration:none;font-size:14px;margin-bottom:2px}
+  .nav a:hover{background:rgba(255,255,255,.07);color:#fff}
+  .nav a.active{background:#1C7ED6;color:#fff;font-weight:600}
+  .sidebar .foot{padding:14px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;color:#7E97B8}
+  .main{display:flex;flex-direction:column;min-width:0}
+  .topbar{height:60px;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;padding:0 24px;position:sticky;top:0;z-index:10}
+  .topbar .crumb{font-size:15px;font-weight:650}
+  .btn{border:1px solid var(--line);background:var(--card);border-radius:9px;padding:7px 14px;font-size:13px;color:var(--ink2);cursor:pointer}
+  .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600}
+  .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#4DABF7,#37B24D);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+  .content{padding:22px 24px 40px;max-width:1380px;width:100%;margin:0 auto}
+  .page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .page-head h1{font-size:20px;font-weight:700}
+  .kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px}
+  .kpi-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px;display:flex;flex-direction:column;gap:8px}
+  .kpi-card .label{font-size:12px;color:var(--ink3)}
+  .kpi-card .val{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px}
+  .panel .hd{display:flex;align-items:center;justify-content:space-between;padding:13px 16px 10px;border-bottom:1px solid var(--line)}
+  .panel .hd .t{font-size:14px;font-weight:650}
+  .panel .bd{padding:16px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;font-weight:600;color:var(--ink3);font-size:12px;padding:10px;border-bottom:1px solid var(--line)}
+  td{padding:12px 10px;border-bottom:1px solid #F0F2F5;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .num{text-align:right}
+  .up{color:var(--up)} .down{color:var(--down)}
+  .tg{display:inline-block;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:600}
+  .tg.buy{background:#EBFBEE;color:var(--down)}
+  .tg.sell{background:#FFF5F5;color:var(--up)}
+  .loading{text-align:center;padding:40px;color:var(--ink3)}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">Q</div><div><div class="name">蚂蚁量化系统</div><div class="sub">个人量化交易平台</div></div></div>
+    <nav class="nav">
+      <a href="/"><span>📊</span>总览首页</a>
+      <a href="/positions"><span>💼</span>持仓管理</a>
+      <a href="/market"><span>🌍</span>市场洞察</a>
+      <a href="/strategies"><span>📈</span>策略管理</a>
+      <a href="/scan"><span>🔍</span>策略选股</a>
+      <a href="/data"><span>💾</span>数据中心</a>
+      <a class="active" href="/trades"><span>📋</span>交易记录</a>
+      <a href="/paper"><span>🎮</span>模拟交易</a>
+      <a href="/watchlist"><span>⭐</span>自选股票</a>
+      <a href="/sequoia"><span>🎯</span>Sequoia选股</a>
+    </nav>
+    <div class="foot"><div>数据源：AKShare</div></div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <span class="crumb">交易记录</span>
+      <div style="flex:1"></div>
+      <div class="avatar">乔</div>
+    </div>
+
+    <div class="content">
+      <div class="page-head"><h1>交易记录</h1></div>
+
+      <div class="kpi" id="kpi"><div class="loading">加载中...</div></div>
+
+      <div class="panel">
+        <div class="hd"><span class="t">交易明细</span><button class="btn" onclick="loadTrades()">刷新</button></div>
+        <div class="bd">
+          <table>
+            <thead>
+              <tr>
+                <th>时间</th>
+                <th>股票名称/代码</th>
+                <th>方向</th>
+                <th class="num">成交价格</th>
+                <th class="num">成交数量</th>
+                <th class="num">成交金额</th>
+                <th class="num">佣金</th>
+                <th class="num">印花税</th>
+                <th class="num">总费用</th>
+              </tr>
+            </thead>
+            <tbody id="tradeBody"><tr><td colspan="9" class="loading">加载中...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/api.js"></script>
+<script>
+async function loadTrades(){
+  try{
+    var trades=await api.getTrades();
+    var summary=await api.getTradeSummary();
+    renderKpi(summary);
+    var el=document.getElementById('tradeBody');
+    if(!trades||!trades.length){el.innerHTML='<tr><td colspan="9" style="text-align:center;color:#8A8F99;padding:40px">暂无交易记录</td></tr>';return}
+    el.innerHTML=trades.map(function(t){
+      var dirCls=t.direction==='buy'?'buy':'sell';
+      var dirText=t.direction==='buy'?'买入':'卖出';
+      return '<tr><td class="mono" style="color:#8A8F99">'+(t.trade_date||'')+' '+(t.trade_time||'')+'</td><td><div style="font-weight:600">'+t.name+'</div><div style="font-size:11px;color:#8A8F99">'+t.symbol+'</div></td><td><span class="tg '+dirCls+'">'+dirText+'</span></td><td class="num">'+fmt(t.price)+'</td><td class="num">'+t.quantity+'</td><td class="num">'+fmt(t.amount,0)+'</td><td class="num">'+fmt(t.commission)+'</td><td class="num">'+fmt(t.stamp_tax)+'</td><td class="num">'+fmt(t.total_fee)+'</td></tr>';
+    }).join('');
+  }catch(e){console.error(e)}
+}
+
+function renderKpi(s){
+  var items=[
+    {label:'总交易次数',val:s.total_trades},
+    {label:'买入次数',val:s.buy_count},
+    {label:'卖出次数',val:s.sell_count},
+    {label:'总成交金额',val:'￥'+fmt(s.total_amount,0)},
+  ];
+  document.getElementById('kpi').innerHTML=items.map(function(k){
+    return '<div class="kpi-card"><span class="label">'+k.label+'</span><span class="val">'+k.val+'</span></div>';
+  }).join('');
+}
+
+loadTrades();
+</script>
+</body>
+</html>

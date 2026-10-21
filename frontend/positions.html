@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>持仓管理 · 蚂蚁量化系统</title>
+<style>
+  :root{--up:#E03131;--down:#2F9E44;--brand:#0969DA;--ink:#1A1D24;--ink2:#5B6270;--ink3:#8A8F99;--line:#E7E9EE;--bg:#F4F5F7;--card:#FFFFFF;--shadow:0 1px 2px rgba(16,24,40,.04),0 1px 3px rgba(16,24,40,.06);--radius:14px;--mono:"SF Mono",ui-monospace,Menlo,monospace}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:var(--bg);font-size:14px;line-height:1.5}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .app{display:grid;grid-template-columns:228px 1fr;min-height:100vh}
+  .sidebar{background:#0E2A52;color:#D6E4F5;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+  .brand{display:flex;align-items:center;gap:10px;padding:20px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .brand .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#1C7ED6,#4DABF7);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
+  .brand .name{font-size:16px;font-weight:700;color:#fff}
+  .brand .sub{font-size:11px;color:#8FA9C9;margin-top:1px}
+  .nav{padding:12px 10px;flex:1;overflow-y:auto}
+  .nav a{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:#C7D8EC;text-decoration:none;font-size:14px;margin-bottom:2px}
+  .nav a:hover{background:rgba(255,255,255,.07);color:#fff}
+  .nav a.active{background:#1C7ED6;color:#fff;font-weight:600}
+  .sidebar .foot{padding:14px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;color:#7E97B8}
+  .main{display:flex;flex-direction:column;min-width:0}
+  .topbar{height:60px;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;padding:0 24px;position:sticky;top:0;z-index:10}
+  .topbar .crumb{font-size:15px;font-weight:650}
+  .btn{border:1px solid var(--line);background:var(--card);border-radius:9px;padding:7px 14px;font-size:13px;color:var(--ink2);cursor:pointer}
+  .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600}
+  .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#4DABF7,#37B24D);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+  .content{padding:22px 24px 40px;max-width:1380px;width:100%;margin:0 auto}
+  .page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .page-head h1{font-size:20px;font-weight:700}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px}
+  .panel .hd{display:flex;align-items:center;justify-content:space-between;padding:13px 16px 10px;border-bottom:1px solid var(--line)}
+  .panel .hd .t{font-size:14px;font-weight:650}
+  .panel .bd{padding:16px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;font-weight:600;color:var(--ink3);font-size:12px;padding:10px;border-bottom:1px solid var(--line)}
+  td{padding:12px 10px;border-bottom:1px solid #F0F2F5;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .num{text-align:right}
+  .up{color:var(--up)} .down{color:var(--down)}
+  .tg{display:inline-block;padding:2px 8px;border-radius:6px;font-size:12px;font-weight:600}
+  .tg.ok{background:#EBFBEE;color:var(--down)}
+  .tg.warn{background:#FFF5F5;color:var(--up)}
+  .modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:100;align-items:center;justify-content:center}
+  .modal.show{display:flex}
+  .modal-box{background:var(--card);border-radius:var(--radius);padding:24px;width:400px;max-width:90%}
+  .modal-box h3{margin-bottom:16px;font-size:16px}
+  .form-group{margin-bottom:14px}
+  .form-group label{display:block;font-size:13px;color:var(--ink2);margin-bottom:5px}
+  .form-group input,.form-group select{width:100%;padding:8px 12px;border:1px solid var(--line);border-radius:8px;font-size:13px;outline:none}
+  .form-group input:focus,.form-group select:focus{border-color:var(--brand)}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+  .loading{text-align:center;padding:40px;color:var(--ink3)}
+  /* 侧边抽屉 */
+  .drawer-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.35);z-index:50;opacity:0;transition:opacity .25s}
+  .drawer-overlay.show{display:block;opacity:1}
+  .drawer{position:fixed;top:0;right:-680px;width:680px;max-width:90vw;height:100vh;background:var(--card);box-shadow:-4px 0 24px rgba(0,0,0,.12);z-index:51;transition:right .3s ease;overflow-y:auto;display:flex;flex-direction:column}
+  .drawer.open{right:0}
+  .drawer-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--card);z-index:2}
+  .drawer-head h3{font-size:16px;font-weight:700}
+  .drawer-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--line);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--ink2)}
+  .drawer-close:hover{background:var(--bg)}
+  .drawer-body{padding:16px 20px;flex:1;overflow-y:auto}
+  .drawer-quote{display:flex;align-items:baseline;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .drawer-quote .name{font-size:20px;font-weight:700}
+  .drawer-quote .code{font-size:13px;color:var(--ink3)}
+  .drawer-quote .price{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums}
+  .drawer-quote .chg{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}
+  .drawer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+  .drawer-grid .qi{padding:10px;background:var(--bg);border-radius:8px}
+  .drawer-grid .qi .lb{font-size:11px;color:var(--ink3);margin-bottom:2px}
+  .drawer-grid .qi .vl{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+  .drawer-chart{margin-bottom:16px}
+  .drawer-chart svg{width:100%;display:block}
+  .drawer-tabs{display:flex;gap:6px;margin-bottom:10px}
+  .drawer-tab{padding:4px 10px;border-radius:6px;font-size:12px;cursor:pointer;background:var(--bg);border:1px solid var(--line);color:var(--ink2)}
+  .drawer-tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .drawer-signal{border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:10px}
+  .drawer-signal .sh{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .drawer-signal .sn{font-weight:650;font-size:13px}
+  .drawer-signal .sb{font-size:11px;padding:2px 8px;border-radius:5px;font-weight:600}
+  .drawer-signal .sd{font-size:12px;color:var(--ink2);line-height:1.5}
+  .drawer-overall{border:2px solid var(--line);border-radius:10px;padding:14px;text-align:center}
+  .drawer-overall .lb{font-size:12px;color:var(--ink3);margin-bottom:3px}
+  .drawer-overall .vl{font-size:18px;font-weight:800}
+  .drawer-overall .ds{font-size:12px;color:var(--ink2);margin-top:3px}
+  .stock-link{cursor:pointer;color:var(--brand);text-decoration:none}
+  .stock-link:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">Q</div><div><div class="name">蚂蚁量化系统</div><div class="sub">个人量化交易平台</div></div></div>
+    <nav class="nav">
+      <a href="/"><span>📊</span>总览首页</a>
+      <a class="active" href="/positions"><span>💼</span>持仓管理</a>
+      <a href="/market"><span>🌍</span>市场洞察</a>
+      <a href="/strategies"><span>📈</span>策略管理</a>
+      <a href="/scan"><span>🔍</span>策略选股</a>
+      <a href="/data"><span>💾</span>数据中心</a>
+      <a href="/trades"><span>📋</span>交易记录</a>
+      <a href="/paper"><span>🎮</span>模拟交易</a>
+      <a href="/watchlist"><span>⭐</span>自选股票</a>
+      <a href="/sequoia"><span>🎯</span>Sequoia选股</a>
+    </nav>
+    <div class="foot"><div>数据源：AKShare</div></div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <span class="crumb">持仓管理</span>
+      <button class="btn primary" onclick="showModal()">+ 新建持仓</button>
+      <div style="flex:1"></div>
+      <div class="avatar">乔</div>
+    </div>
+
+    <div class="content">
+      <div class="page-head">
+        <h1>我的持仓</h1>
+      </div>
+
+      <div class="panel">
+        <div class="hd"><span class="t">持仓列表</span><button class="btn" onclick="loadPositions()">刷新</button></div>
+        <div class="bd">
+          <table>
+            <thead>
+              <tr>
+                <th>股票名称/代码</th>
+                <th class="num">持仓数量</th>
+                <th class="num">平均成本</th>
+                <th class="num">当前价格</th>
+                <th class="num">市值</th>
+                <th class="num">浮动盈亏</th>
+                <th class="num">盈亏比例</th>
+                <th class="num">当日涨跌</th>
+                <th class="num">当日盈亏</th>
+                <th class="num">仓位占比</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="posBody"><tr><td colspan="11" class="loading">加载中...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 侧边股票详情抽屉 -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h3 id="drawerTitle">股票详情</h3>
+    <div style="display:flex;align-items:center;gap:8px">
+      <a id="drawerFullLink" href="#" target="_blank" class="btn" style="font-size:12px;padding:5px 10px;text-decoration:none;color:var(--ink2)">新窗口打开</a>
+      <button class="drawer-close" onclick="closeDrawer()">×</button>
+    </div>
+  </div>
+  <div class="drawer-body">
+    <div class="drawer-quote" id="drawerQuote"><div class="loading">加载行情...</div></div>
+    <div class="drawer-grid" id="drawerGrid"></div>
+    <div class="panel" style="margin-bottom:14px">
+      <div class="hd">
+        <span class="t">K线走势</span>
+        <div class="drawer-tabs" id="drawerPeriodTabs">
+          <div class="drawer-tab active" onclick="switchDrawerPeriod('daily',this)">日K</div>
+          <div class="drawer-tab" onclick="switchDrawerPeriod('weekly',this)">周K</div>
+          <div class="drawer-tab" onclick="switchDrawerPeriod('monthly',this)">月K</div>
+        </div>
+      </div>
+      <div class="bd"><div class="drawer-chart"><svg id="drawerMainSvg" viewBox="0 0 1000 300" preserveAspectRatio="xMidYMid meet"></svg></div></div>
+    </div>
+    <div class="panel" style="margin-bottom:14px">
+      <div class="hd">
+        <span class="t">技术指标</span>
+        <div class="drawer-tabs" id="drawerSubTabs">
+          <div class="drawer-tab active" onclick="switchDrawerSub('macd',this)">MACD</div>
+          <div class="drawer-tab" onclick="switchDrawerSub('kdj',this)">KDJ</div>
+          <div class="drawer-tab" onclick="switchDrawerSub('rsi',this)">RSI</div>
+        </div>
+      </div>
+      <div class="bd"><div class="drawer-chart"><svg id="drawerSubSvg" viewBox="0 0 1000 180" preserveAspectRatio="xMidYMid meet"></svg></div></div>
+    </div>
+    <div class="panel">
+      <div class="hd"><span class="t">技术分析信号</span></div>
+      <div class="bd" id="drawerSignals"><div class="loading">加载信号...</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <h3>新建持仓</h3>
+    <div class="form-group">
+      <label>搜索股票（代码或名称）</label>
+      <input type="text" id="f_search" placeholder="输入代码或名称搜索，如 600519 或 贵州茅台" autocomplete="off">
+      <div id="searchResults" style="display:none;max-height:200px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;margin-top:4px;background:#fff"></div>
+      <input type="hidden" id="f_symbol">
+      <input type="hidden" id="f_name">
+    </div>
+    <div class="form-group">
+      <label>持仓数量</label>
+      <input type="number" id="f_quantity" placeholder="股数">
+    </div>
+    <div class="form-group">
+      <label>平均成本</label>
+      <input type="number" id="f_cost" step="0.01" placeholder="买入均价">
+    </div>
+    <div class="modal-actions">
+      <button class="btn" onclick="hideModal()">取消</button>
+      <button class="btn primary" onclick="createPosition()">确认</button>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/api.js"></script>
+<script>
+function signCls(n){return n>0?'up':(n<0?'down':'flat')}
+
+async function loadPositions(){
+  try{
+    var positions=await api.getPositions();
+    var el=document.getElementById('posBody');
+    if(!positions||!positions.length){el.innerHTML='<tr><td colspan="11" style="text-align:center;color:#8A8F99;padding:40px">暂无持仓，点击右上角新建</td></tr>';return}
+    el.innerHTML=positions.map(function(p){
+      var cls=signCls(p.profit_loss_pct);
+      var dayCls=signCls(p.day_change_pct||0);
+      var dayChg=p.day_change_pct!=null?(p.day_change_pct>=0?'+':'')+fmt(p.day_change_pct)+'%':'--';
+      var dayPnl=p.day_profit_loss!=null?fmt(p.day_profit_loss,0):'--';
+      return '<tr><td><div style="font-weight:600"><a class="stock-link" onclick="openDrawer(\''+p.symbol+'\',\''+p.name+'\')">'+p.name+'</a></div><div style="font-size:11px;color:#8A8F99"><a class="stock-link" onclick="openDrawer(\''+p.symbol+'\',\''+p.name+'\')">'+p.symbol+'</a></div></td><td class="num">'+p.quantity+'</td><td class="num">'+fmt(p.avg_cost)+'</td><td class="num">'+fmt(p.current_price)+'</td><td class="num">'+fmt(p.market_value,0)+'</td><td class="num '+cls+'">'+fmt(p.profit_loss,0)+'</td><td class="num '+cls+'">'+(p.profit_loss_pct>=0?'+':'')+fmt(p.profit_loss_pct)+'%</td><td class="num '+dayCls+'">'+dayChg+'</td><td class="num '+dayCls+'">'+dayPnl+'</td><td class="num">'+fmt(p.position_pct,1)+'%</td><td><button class="btn" onclick="deletePosition('+p.id+')">删除</button></td></tr>';
+    }).join('');
+  }catch(e){console.error(e);document.getElementById('posBody').innerHTML='<tr><td colspan="11" style="text-align:center;color:red;padding:40px">加载失败，请刷新重试</td></tr>'}
+}
+
+function showModal(){document.getElementById('modal').classList.add('show')}
+function hideModal(){
+  document.getElementById('modal').classList.remove('show');
+  document.getElementById('f_search').value='';
+  document.getElementById('f_symbol').value='';
+  document.getElementById('f_name').value='';
+  document.getElementById('f_quantity').value='';
+  document.getElementById('f_cost').value='';
+  document.getElementById('searchResults').style.display='none';
+}
+
+// 股票搜索（防抖）
+var searchTimer=null;
+document.getElementById('f_search').addEventListener('input',function(e){
+  var keyword=e.target.value.trim();
+  clearTimeout(searchTimer);
+  if(keyword.length<1){document.getElementById('searchResults').style.display='none';return}
+  searchTimer=setTimeout(function(){doSearchStock(keyword)},300);
+});
+
+async function doSearchStock(keyword){
+  try{
+    var results=await api.searchStock(keyword);
+    var el=document.getElementById('searchResults');
+    if(!results||!results.length){el.innerHTML='<div style="padding:10px;color:#8A8F99;font-size:13px">未找到匹配股票</div>';el.style.display='block';return}
+    el.innerHTML='';
+    results.forEach(function(s){
+      var div=document.createElement('div');
+      div.style.cssText='padding:8px 12px;cursor:pointer;border-bottom:1px solid #f0f0f0;font-size:13px';
+      div.innerHTML='<span style="font-weight:600">'+s.name+'</span> <span style="color:#8A8F99;margin-left:8px">'+s.symbol+'</span>';
+      div.onclick=function(){selectStock(s.symbol,s.name)};
+      div.onmouseover=function(){this.style.background='#f5f7fa'};
+      div.onmouseout=function(){this.style.background='#fff'};
+      el.appendChild(div);
+    });
+    el.style.display='block';
+  }catch(e){console.error('搜索失败:',e)}
+}
+
+function selectStock(symbol,name){
+  document.getElementById('f_symbol').value=symbol;
+  document.getElementById('f_name').value=name;
+  document.getElementById('f_search').value=name+' ('+symbol+')';
+  document.getElementById('searchResults').style.display='none';
+}
+
+async function createPosition(){
+  var symbol=document.getElementById('f_symbol').value.trim();
+  var name=document.getElementById('f_name').value.trim();
+  var quantity=parseInt(document.getElementById('f_quantity').value);
+  var cost=parseFloat(document.getElementById('f_cost').value);
+  if(!symbol){alert('请先搜索并选择股票');return}
+  if(!quantity||!cost){alert('请填写完整信息');return}
+  try{
+    await api.createPosition({account_id:1,symbol:symbol,name:name,market:'A股',quantity:quantity,avg_cost:cost});
+    hideModal();
+    loadPositions();
+  }catch(e){
+    console.error('创建持仓失败:', e);
+    alert('创建失败: ' + (e.message || '未知错误'));
+  }
+}
+
+async function deletePosition(id){
+  if(!confirm('确认删除该持仓？'))return;
+  try{
+    await api.deletePosition(id);
+    loadPositions();
+  }catch(e){alert('删除失败')}
+}
+
+// ========== 侧边抽屉 ==========
+var drawerSymbol = '';
+var drawerPeriod = 'daily';
+var drawerSubChart = 'macd';
+var drawerTechData = null;
+
+function openDrawer(symbol, name) {
+  drawerSymbol = symbol;
+  drawerPeriod = 'daily';
+  drawerSubChart = 'macd';
+  drawerTechData = null;
+  document.getElementById('drawerTitle').textContent = name + ' 详情';
+  document.getElementById('drawerFullLink').href = '/stock_detail/' + symbol;
+  document.getElementById('drawerOverlay').classList.add('show');
+  document.getElementById('drawer').classList.add('open');
+  // Reset tabs
+  document.querySelectorAll('#drawerPeriodTabs .drawer-tab').forEach(function(t,i){t.classList.toggle('active',i===0)});
+  document.querySelectorAll('#drawerSubTabs .drawer-tab').forEach(function(t,i){t.classList.toggle('active',i===0)});
+  document.getElementById('drawerQuote').innerHTML = '<div class="loading">加载行情...</div>';
+  document.getElementById('drawerGrid').innerHTML = '';
+  document.getElementById('drawerMainSvg').innerHTML = '';
+  document.getElementById('drawerSubSvg').innerHTML = '';
+  document.getElementById('drawerSignals').innerHTML = '<div class="loading">加载信号...</div>';
+  loadDrawerData();
+}
+
+function closeDrawer() {
+  document.getElementById('drawerOverlay').classList.remove('show');
+  document.getElementById('drawer').classList.remove('open');
+}
+
+async function loadDrawerData() {
+  loadDrawerQuote();
+  await loadDrawerTechnical();
+}
+
+async function loadDrawerQuote() {
+  try {
+    var quote = await api.getQuote(drawerSymbol);
+    if (!quote || quote.error) {
+      document.getElementById('drawerQuote').innerHTML = '<div style="color:var(--ink3)">未找到该股票</div>';
+      return;
+    }
+    var cls = signCls(quote.change_pct);
+    var pctStr = (quote.change_pct >= 0 ? '+' : '') + fmt(quote.change_pct) + '%';
+    document.getElementById('drawerQuote').innerHTML =
+      '<span class="name">' + (quote.name || '') + '</span>' +
+      '<span class="code">' + quote.symbol + '</span>' +
+      '<span class="price ' + cls + '">' + fmt(quote.price) + '</span>' +
+      '<span class="chg ' + cls + '">' + pctStr + '</span>';
+    var items = [
+      {lb: '今开', vl: fmt(quote.open)},
+      {lb: '昨收', vl: fmt(quote.prev_close)},
+      {lb: '最高', vl: fmt(quote.high), cls: 'up'},
+      {lb: '最低', vl: fmt(quote.low), cls: 'down'},
+      {lb: '成交量', vl: fmt(quote.volume / 100, 0) + '手'},
+      {lb: '成交额', vl: fmt(quote.amount / 1e8, 2) + '亿'},
+      {lb: '换手率', vl: fmt(quote.turnover_rate || 0) + '%'},
+      {lb: '市盈率', vl: fmt(quote.pe_ratio || 0)},
+    ];
+    document.getElementById('drawerGrid').innerHTML = items.map(function(it) {
+      return '<div class="qi"><div class="lb">' + it.lb + '</div><div class="vl ' + (it.cls || '') + '">' + it.vl + '</div></div>';
+    }).join('');
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+async function loadDrawerTechnical() {
+  try {
+    var data = await api.getTechnical(drawerSymbol, drawerPeriod);
+    if (!data || data.error) {
+      document.getElementById('drawerSignals').innerHTML = '<div class="loading">' + (data && data.error || '加载失败') + '</div>';
+      return;
+    }
+    drawerTechData = data;
+    renderDrawerMainChart();
+    renderDrawerSubChart();
+    renderDrawerSignals();
+  } catch (e) {
+    console.error(e);
+    document.getElementById('drawerSignals').innerHTML = '<div class="loading">加载失败</div>';
+  }
+}
+
+function renderDrawerMainChart() {
+  if (!drawerTechData) return;
+  var dates = drawerTechData.dates;
+  var closes = drawerTechData.closes;
+  var n = dates.length;
+  if (n < 2) return;
+  var show = Math.min(n, 100);
+  var start = n - show;
+  var d = dates.slice(start);
+  var c = closes.slice(start);
+
+  var W = 1000, H = 300, padL = 55, padR = 15, padT = 12, padB = 25;
+  api.getKline(drawerSymbol, drawerPeriod).then(function(klines) {
+    if (!klines || !klines.length) return;
+    var kk = klines.slice(start);
+    var allHi = Math.max.apply(null, kk.map(function(k){return k.high}));
+    var allLo = Math.min.apply(null, kk.map(function(k){return k.low}));
+    // Include MA lines
+    ['ma5','ma10','ma20'].forEach(function(key) {
+      (drawerTechData[key] || []).slice(start).forEach(function(v) { if (v !== null) { allHi = Math.max(allHi, v); allLo = Math.min(allLo, v); }});
+    });
+    var pad = (allHi - allLo) * 0.05;
+    allHi += pad; allLo -= pad;
+    var barW = (W - padL - padR) / show * 0.7;
+    var X = function(i) { return padL + i * ((W - padL - padR) / show) + ((W - padL - padR) / show - barW) / 2; };
+    var Y = function(v) { return padT + (1 - (v - allLo) / (allHi - allLo || 1)) * (H - padT - padB); };
+
+    var svg = '';
+    // Grid
+    for (var g = 0; g <= 4; g++) {
+      var vy = padT + g / 4 * (H - padT - padB);
+      var lv = allHi - g / 4 * (allHi - allLo);
+      svg += '<line x1="' + padL + '" y1="' + vy + '" x2="' + (W - padR) + '" y2="' + vy + '" stroke="#EEF1F5"/>';
+      svg += '<text x="' + (padL - 6) + '" y="' + (vy + 3) + '" font-size="10" fill="#8A8F99" text-anchor="end">' + fmt(lv) + '</text>';
+    }
+    // K-lines
+    kk.forEach(function(k, i) {
+      var cx = X(i) + barW / 2;
+      var isUp = k.close >= k.open;
+      var color = isUp ? '#E03131' : '#2F9E44';
+      svg += '<line x1="' + cx + '" y1="' + Y(k.high) + '" x2="' + cx + '" y2="' + Y(k.low) + '" stroke="' + color + '" stroke-width="1"/>';
+      svg += '<rect x="' + X(i) + '" y="' + Y(Math.max(k.open, k.close)) + '" width="' + barW + '" height="' + Math.max(Y(Math.min(k.open, k.close)) - Y(Math.max(k.open, k.close)), 1) + '" fill="' + color + '"/>';
+    });
+    // MA lines
+    var maColors = {ma5: '#F59F00', ma10: '#0969DA', ma20: '#AE3EC9'};
+    Object.keys(maColors).forEach(function(key) {
+      var arr = (drawerTechData[key] || []).slice(start);
+      var path = '';
+      var started = false;
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i] !== null && arr[i] !== undefined) {
+          path += (started ? ' L' : 'M') + (X(i) + barW / 2).toFixed(1) + ',' + Y(arr[i]).toFixed(1);
+          started = true;
+        }
+      }
+      if (path) svg += '<path d="' + path + '" stroke="' + maColors[key] + '" stroke-width="1.2" fill="none"/>';
+    });
+    // Date labels
+    var step = Math.max(Math.floor(show / 5), 1);
+    for (var i = 0; i < show; i += step) {
+      svg += '<text x="' + (X(i) + barW / 2) + '" y="' + (H - 4) + '" font-size="9" fill="#8A8F99" text-anchor="middle">' + (d[i] || '').slice(5) + '</text>';
+    }
+    document.getElementById('drawerMainSvg').setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    document.getElementById('drawerMainSvg').innerHTML = svg;
+  });
+}
+
+function renderDrawerSubChart() {
+  if (!drawerTechData) return;
+  var n = drawerTechData.dates.length;
+  var show = Math.min(n, 100);
+  var start = n - show;
+  var W = 1000, H = 180, padL = 55, padR = 15, padT = 12, padB = 25;
+  var barW = (W - padL - padR) / show * 0.6;
+  var X = function(i) { return padL + i * ((W - padL - padR) / show) + ((W - padL - padR) / show - barW) / 2; };
+  var Y = function(v, lo, hi) { return padT + (1 - (v - lo) / (hi - lo || 1)) * (H - padT - padB); };
+  var svg = '';
+
+  if (drawerSubChart === 'macd') {
+    var macd = drawerTechData.macd;
+    var dif = macd.dif.slice(start);
+    var dea = macd.dea.slice(start);
+    var bar = macd.macd_bar.slice(start);
+    var allVals = dif.concat(dea).concat(bar).filter(function(v){return v !== null});
+    var maxAbs = Math.max.apply(null, allVals.map(Math.abs)) || 1;
+    var zeroY = Y(0, -maxAbs, maxAbs);
+    svg += '<line x1="' + padL + '" y1="' + zeroY + '" x2="' + (W - padR) + '" y2="' + zeroY + '" stroke="#DEE2E6" stroke-dasharray="3,3"/>';
+    bar.forEach(function(v, i) {
+      if (v === null) return;
+      var color = v >= 0 ? '#E03131' : '#2F9E44';
+      var top = v >= 0 ? Y(v, -maxAbs, maxAbs) : zeroY;
+      svg += '<rect x="' + X(i) + '" y="' + top + '" width="' + barW + '" height="' + Math.max(Math.abs(Y(v, -maxAbs, maxAbs) - zeroY), 0.5) + '" fill="' + color + '" opacity="0.7"/>';
+    });
+    // DIF/DEA lines
+    [['#0969DA', dif], ['#F59F00', dea]].forEach(function(pair) {
+      var path = '', started = false;
+      for (var i = 0; i < pair[1].length; i++) {
+        if (pair[1][i] !== null) { path += (started ? ' L' : 'M') + (X(i) + barW / 2).toFixed(1) + ',' + Y(pair[1][i], -maxAbs, maxAbs).toFixed(1); started = true; }
+      }
+      if (path) svg += '<path d="' + path + '" stroke="' + pair[0] + '" stroke-width="1.2" fill="none"/>';
+    });
+  } else if (drawerSubChart === 'kdj') {
+    var kdj = drawerTechData.kdj;
+    var k = kdj.k.slice(start), d = kdj.d.slice(start), j = kdj.j.slice(start);
+    var allVals = k.concat(d).concat(j).filter(function(v){return v !== null});
+    var hi = Math.max.apply(null, allVals) || 100, lo = Math.min.apply(null, allVals) || 0;
+    var pad = (hi - lo) * 0.1; hi += pad; lo -= pad;
+    [80, 20].forEach(function(level) {
+      if (level >= lo && level <= hi) svg += '<line x1="' + padL + '" y1="' + Y(level, lo, hi) + '" x2="' + (W - padR) + '" y2="' + Y(level, lo, hi) + '" stroke="#DEE2E6" stroke-dasharray="3,3"/>';
+    });
+    [['#0969DA', k], ['#F59F00', d], ['#AE3EC9', j]].forEach(function(pair) {
+      var path = '', started = false;
+      for (var i = 0; i < pair[1].length; i++) {
+        if (pair[1][i] !== null) { path += (started ? ' L' : 'M') + (X(i) + barW / 2).toFixed(1) + ',' + Y(pair[1][i], lo, hi).toFixed(1); started = true; }
+      }
+      if (path) svg += '<path d="' + path + '" stroke="' + pair[0] + '" stroke-width="1.2" fill="none"/>';
+    });
+  } else if (drawerSubChart === 'rsi') {
+    var rsi = drawerTechData.rsi;
+    var r6 = rsi.rsi6.slice(start), r12 = rsi.rsi12.slice(start), r24 = rsi.rsi24.slice(start);
+    [80, 50, 20].forEach(function(level) {
+      svg += '<line x1="' + padL + '" y1="' + Y(level, 0, 100) + '" x2="' + (W - padR) + '" y2="' + Y(level, 0, 100) + '" stroke="#DEE2E6" stroke-dasharray="' + (level === 50 ? '2,2' : '3,3') + '"/>';
+    });
+    [['#F59F00', r6], ['#0969DA', r12], ['#AE3EC9', r24]].forEach(function(pair) {
+      var path = '', started = false;
+      for (var i = 0; i < pair[1].length; i++) {
+        if (pair[1][i] !== null) { path += (started ? ' L' : 'M') + X(i).toFixed(1) + ',' + Y(pair[1][i], 0, 100).toFixed(1); started = true; }
+      }
+      if (path) svg += '<path d="' + path + '" stroke="' + pair[0] + '" stroke-width="1.2" fill="none"/>';
+    });
+  }
+  // Date labels
+  var dates = drawerTechData.dates.slice(start);
+  var step = Math.max(Math.floor(show / 5), 1);
+  for (var i = 0; i < show; i += step) {
+    svg += '<text x="' + (X(i) + barW / 2) + '" y="' + (H - 4) + '" font-size="9" fill="#8A8F99" text-anchor="middle">' + (dates[i] || '').slice(5) + '</text>';
+  }
+  document.getElementById('drawerSubSvg').setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  document.getElementById('drawerSubSvg').innerHTML = svg;
+}
+
+function renderDrawerSignals() {
+  if (!drawerTechData || !drawerTechData.signals) {
+    document.getElementById('drawerSignals').innerHTML = '<div class="loading">暂无信号数据</div>';
+    return;
+  }
+  var signals = drawerTechData.signals;
+  var html = '<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px">';
+  [['均线系统', signals.ma], ['MACD', signals.macd], ['KDJ', signals.kdj], ['RSI', signals.rsi]].forEach(function(pair) {
+    var s = pair[1] || {signal: '--', desc: '暂无数据'};
+    var color = getDrawerSignalColor(s.signal);
+    html += '<div class="drawer-signal"><div class="sh"><span class="sn">' + pair[0] + '</span><span class="sb" style="background:' + color + '20;color:' + color + '">' + s.signal + '</span></div><div class="sd">' + s.desc + '</div></div>';
+  });
+  html += '</div>';
+  var overall = signals.overall || {signal: '--', desc: '暂无数据'};
+  var oc = getDrawerSignalColor(overall.signal);
+  html += '<div class="drawer-overall" style="border-color:' + oc + ';margin-top:12px"><div class="lb">综合研判</div><div class="vl" style="color:' + oc + '">' + overall.signal + '</div><div class="ds">' + overall.desc + '</div></div>';
+  document.getElementById('drawerSignals').innerHTML = html;
+}
+
+function getDrawerSignalColor(signal) {
+  if (['金叉','多头排列','多头','超卖','偏多','看多'].some(function(s){return signal.indexOf(s) >= 0})) return '#E03131';
+  if (['死叉','超买','偏空','看空'].some(function(s){return signal.indexOf(s) >= 0})) return '#2F9E44';
+  return '#0969DA';
+}
+
+function switchDrawerPeriod(period, el) {
+  drawerPeriod = period;
+  document.querySelectorAll('#drawerPeriodTabs .drawer-tab').forEach(function(t){t.classList.remove('active')});
+  el.classList.add('active');
+  loadDrawerTechnical();
+}
+
+function switchDrawerSub(type, el) {
+  drawerSubChart = type;
+  document.querySelectorAll('#drawerSubTabs .drawer-tab').forEach(function(t){t.classList.remove('active')});
+  el.classList.add('active');
+  renderDrawerSubChart();
+}
+
+// ESC 关闭抽屉
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeDrawer();
+});
+
+loadPositions();
+</script>
+</body>
+</html>

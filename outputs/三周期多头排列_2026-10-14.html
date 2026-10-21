@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>A股日/周/月线三周期多头排列 · 2026-10-14</title>
+<style>
+  :root {
+    --bg:#f5f6f8; --card:#fff; --ink:#1a1d23; --ink2:#5b6470; --ink3:#8b95a1;
+    --line:#e6e9ee; --up:#d92b2b; --down:#0a8f43; --brand:#c8102e; --accent:#1f5fd6;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+    font:14px/1.6 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif; }
+  .wrap { max-width:1280px; margin:0 auto; padding:28px 20px 60px; }
+  header { margin-bottom:22px; }
+  h1 { font-size:24px; margin:0 0 6px; letter-spacing:.5px; }
+  .sub { color:var(--ink3); font-size:13px; }
+  .badge { display:inline-block; background:var(--brand); color:#fff; font-size:12px;
+    padding:2px 9px; border-radius:10px; margin-left:8px; vertical-align:middle; }
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:12px; margin:20px 0 8px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:14px 16px; }
+  .card .k { color:var(--ink3); font-size:12px; }
+  .card .v { font-size:23px; font-weight:700; margin-top:3px; }
+  .card .v.sm { font-size:15px; font-weight:600; color:var(--ink2); }
+  .card.hl { border-color:#f3c8cf; background:#fff7f8; }
+  .card.hl .v { color:var(--brand); }
+  .note { background:#fffdf3; border:1px solid #f0e3b8; border-radius:10px;
+    padding:12px 15px; font-size:12.5px; color:#6b5a1e; margin:16px 0; }
+  .note b { color:#8a6d00; }
+  h2 { font-size:15px; margin:24px 0 10px; color:var(--ink2); }
+  .chips { display:flex; flex-wrap:wrap; gap:7px; }
+  .chip { background:var(--card); border:1px solid var(--line); border-radius:16px;
+    padding:3px 11px; font-size:12.5px; color:var(--ink2); }
+  .chip b { color:var(--brand); margin-left:5px; }
+  table { width:100%; border-collapse:collapse; background:var(--card);
+    border:1px solid var(--line); border-radius:12px; overflow:hidden;
+    font-size:12.5px; margin-top:10px; }
+  th { background:#fafbfc; color:var(--ink2); font-weight:600; text-align:left;
+    padding:10px 11px; border-bottom:1px solid var(--line); white-space:nowrap;
+    position:sticky; top:0; }
+  td { padding:9px 11px; border-bottom:1px solid #f2f4f7; vertical-align:top; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:#fafcff; }
+  .idx { color:var(--ink3); width:38px; }
+  .sym { font-family:ui-monospace,Menlo,monospace; color:var(--accent); white-space:nowrap; }
+  .nm { font-weight:600; white-space:nowrap; }
+  .ind { color:var(--ink2); white-space:nowrap; }
+  .num { text-align:right; font-family:ui-monospace,Menlo,monospace; white-space:nowrap; }
+  .up { color:var(--up); font-weight:600; }
+  .down { color:var(--down); font-weight:600; }
+  .flat { color:var(--ink3); }
+  .ma { font-family:ui-monospace,Menlo,monospace; color:var(--ink2); font-size:11.5px; }
+  footer { margin-top:26px; color:var(--ink3); font-size:11.5px; line-height:1.8; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>A股日 / 周 / 月线 三周期多头排列<span class="badge">2026-10-14 收盘</span></h1>
+  <div class="sub">多头排列定义：日线 MA5&gt;MA10&gt;MA20&gt;MA60，周线 MA5&gt;MA10&gt;MA20，月线 MA5&gt;MA10&gt;MA20（均线自上而下依次排列）</div>
+</header>
+
+<div class="cards">
+  <div class="card hl"><div class="k">三周期同时多头排列</div><div class="v">73</div><div class="k">只</div></div>
+  <div class="card"><div class="k">全市场样本</div><div class="v">5228</div><div class="k">只 A 股</div></div>
+  <div class="card"><div class="k">占比</div><div class="v">1.4<span style="font-size:14px">%</span></div></div>
+  <div class="card"><div class="k">今日表现</div><div class="v sm"><span class="up">涨 36</span> / <span class="down">跌 33</span> / <span class="flat">平 4</span></div></div>
+</div>
+
+<div class="note">
+<b>筛选漏斗：</b>全市场 5228 只 → 日线多头 <b>651</b> 只 → 日+周 <b>480</b> 只 →
+日+月 <b>85</b> 只 → 周+月 <b>244</b> 只 → <b>三周期同时多头 73 只</b>。
+（另有 128 只因历史不足 20 个月线被排除）
+</div>
+
+<h2>行业分布</h2>
+<div class="chips">
+<span class="chip">银行<b>8</b></span>
+<span class="chip">电力行业<b>6</b></span>
+<span class="chip">煤炭采选<b>5</b></span>
+<span class="chip">医疗器械<b>4</b></span>
+<span class="chip">医药制造<b>3</b></span>
+<span class="chip">港口水运<b>3</b></span>
+<span class="chip">生物制品<b>3</b></span>
+<span class="chip">纺织服装<b>3</b></span>
+<span class="chip">专用设备<b>2</b></span>
+<span class="chip">交运物流<b>2</b></span>
+<span class="chip">化工行业<b>2</b></span>
+<span class="chip">文化传媒<b>2</b></span>
+<span class="chip">装修建材<b>2</b></span>
+<span class="chip">软件服务<b>2</b></span>
+<span class="chip">专业服务<b>1</b></span>
+<span class="chip">互联网服务<b>1</b></span>
+<span class="chip">光学光电子<b>1</b></span>
+<span class="chip">化学制品<b>1</b></span>
+<span class="chip">化学原料<b>1</b></span>
+<span class="chip">医疗服务<b>1</b></span>
+<span class="chip">医疗行业<b>1</b></span>
+<span class="chip">塑胶制品<b>1</b></span>
+<span class="chip">多元金融<b>1</b></span>
+<span class="chip">家电行业<b>1</b></span>
+<span class="chip">房地产服务<b>1</b></span>
+<span class="chip">旅游酒店<b>1</b></span>
+<span class="chip">有色金属<b>1</b></span>
+<span class="chip">木业家具<b>1</b></span>
+<span class="chip">机械行业<b>1</b></span>
+<span class="chip">游戏<b>1</b></span>
+<span class="chip">环保工程<b>1</b></span>
+<span class="chip">电子元件<b>1</b></span>
+<span class="chip">电网设备<b>1</b></span>
+<span class="chip">美容护理<b>1</b></span>
+<span class="chip">航天航空<b>1</b></span>
+<span class="chip">航运港口<b>1</b></span>
+<span class="chip">装修装饰<b>1</b></span>
+<span class="chip">软件开发<b>1</b></span>
+<span class="chip">通信设备<b>1</b></span>
+<span class="chip">采掘行业<b>1</b></span>
+</div>
+
+<h2>入选个股（73 只）</h2>
+<table>
+<thead><tr>
+<th>#</th><th>代码</th><th>名称</th><th>行业</th><th>收盘</th><th>涨跌</th>
+<th>日线均线排列</th><th>周线均线排列</th><th>月线均线排列</th>
+</tr></thead>
+<tbody>
+<tr>
+<td class="idx">1</td>
+<td class="sym">002811.SZ</td>
+<td class="nm">郑中设计</td>
+<td class="ind">专业服务</td>
+<td class="num">20.70</td>
+<td class="num up">+2.12%</td>
+<td class="ma">MA5 18.91 &gt; MA10 17.75 &gt; MA20 16.35 &gt; MA60 13.13</td>
+<td class="ma">MA5 17.56 &gt; MA10 15.48 &gt; MA20 13.21</td>
+<td class="ma">MA5 14.49 &gt; MA10 14.35 &gt; MA20 12.87</td>
+</tr><tr>
+<td class="idx">2</td>
+<td class="sym">002774.SZ</td>
+<td class="nm">快意电梯</td>
+<td class="ind">专用设备</td>
+<td class="num">17.80</td>
+<td class="num down">-1.98%</td>
+<td class="ma">MA5 18.32 &gt; MA10 17.72 &gt; MA20 17.02 &gt; MA60 16.29</td>
+<td class="ma">MA5 17.86 &gt; MA10 16.99 &gt; MA20 15.67</td>
+<td class="ma">MA5 16.05 &gt; MA10 13.73 &gt; MA20 11.41</td>
+</tr><tr>
+<td class="idx">3</td>
+<td class="sym">300833.SZ</td>
+<td class="nm">浩洋股份</td>
+<td class="ind">专用设备</td>
+<td class="num">45.18</td>
+<td class="num down">-1.91%</td>
+<td class="ma">MA5 44.55 &gt; MA10 44.03 &gt; MA20 42.24 &gt; MA60 38.31</td>
+<td class="ma">MA5 43.18 &gt; MA10 41.10 &gt; MA20 37.16</td>
+<td class="ma">MA5 38.75 &gt; MA10 38.73 &gt; MA20 38.02</td>
+</tr><tr>
+<td class="idx">4</td>
+<td class="sym">688004.SH</td>
+<td class="nm">博汇科技</td>
+<td class="ind">互联网服务</td>
+<td class="num">37.29</td>
+<td class="num down">-12.73%</td>
+<td class="ma">MA5 35.52 &gt; MA10 33.59 &gt; MA20 30.99 &gt; MA60 24.72</td>
+<td class="ma">MA5 33.34 &gt; MA10 27.61 &gt; MA20 23.74</td>
+<td class="ma">MA5 26.18 &gt; MA10 24.56 &gt; MA20 23.67</td>
+</tr><tr>
+<td class="idx">5</td>
+<td class="sym">001317.SZ</td>
+<td class="nm">三羊马</td>
+<td class="ind">交运物流</td>
+<td class="num">62.10</td>
+<td class="num down">-5.99%</td>
+<td class="ma">MA5 65.28 &gt; MA10 63.97 &gt; MA20 58.31 &gt; MA60 54.40</td>
+<td class="ma">MA5 62.40 &gt; MA10 57.65 &gt; MA20 52.70</td>
+<td class="ma">MA5 54.30 &gt; MA10 52.41 &gt; MA20 48.81</td>
+</tr><tr>
+<td class="idx">6</td>
+<td class="sym">601598.SH</td>
+<td class="nm">中国外运</td>
+<td class="ind">交运物流</td>
+<td class="num">6.93</td>
+<td class="num up">+1.17%</td>
+<td class="ma">MA5 6.83 &gt; MA10 6.72 &gt; MA20 6.61 &gt; MA60 6.47</td>
+<td class="ma">MA5 6.72 &gt; MA10 6.64 &gt; MA20 6.21</td>
+<td class="ma">MA5 6.37 &gt; MA10 6.20 &gt; MA20 5.78</td>
+</tr><tr>
+<td class="idx">7</td>
+<td class="sym">300301.SZ</td>
+<td class="nm">ST长方</td>
+<td class="ind">光学光电子</td>
+<td class="num">4.21</td>
+<td class="num up">+2.93%</td>
+<td class="ma">MA5 4.17 &gt; MA10 3.95 &gt; MA20 3.71 &gt; MA60 3.51</td>
+<td class="ma">MA5 3.88 &gt; MA10 3.65 &gt; MA20 3.55</td>
+<td class="ma">MA5 3.77 &gt; MA10 3.47 &gt; MA20 2.85</td>
+</tr><tr>
+<td class="idx">8</td>
+<td class="sym">301190.SZ</td>
+<td class="nm">善水科技</td>
+<td class="ind">化学制品</td>
+<td class="num">45.82</td>
+<td class="num down">-6.87%</td>
+<td class="ma">MA5 45.40 &gt; MA10 36.00 &gt; MA20 27.30 &gt; MA60 21.49</td>
+<td class="ma">MA5 33.03 &gt; MA10 25.98 &gt; MA20 21.77</td>
+<td class="ma">MA5 27.15 &gt; MA10 25.51 &gt; MA20 24.51</td>
+</tr><tr>
+<td class="idx">9</td>
+<td class="sym">603067.SH</td>
+<td class="nm">振华股份</td>
+<td class="ind">化学原料</td>
+<td class="num">43.81</td>
+<td class="num down">-0.73%</td>
+<td class="ma">MA5 41.99 &gt; MA10 41.01 &gt; MA20 38.52 &gt; MA60 35.30</td>
+<td class="ma">MA5 40.48 &gt; MA10 37.71 &gt; MA20 36.73</td>
+<td class="ma">MA5 39.42 &gt; MA10 37.34 &gt; MA20 28.19</td>
+</tr><tr>
+<td class="idx">10</td>
+<td class="sym">300225.SZ</td>
+<td class="nm">金力泰</td>
+<td class="ind">化工行业</td>
+<td class="num">8.39</td>
+<td class="num down">-1.87%</td>
+<td class="ma">MA5 8.31 &gt; MA10 8.14 &gt; MA20 8.11 &gt; MA60 7.40</td>
+<td class="ma">MA5 8.16 &gt; MA10 7.82 &gt; MA20 7.63</td>
+<td class="ma">MA5 7.53 &gt; MA10 6.94 &gt; MA20 6.34</td>
+</tr><tr>
+<td class="idx">11</td>
+<td class="sym">603980.SH</td>
+<td class="nm">吉华集团</td>
+<td class="ind">化工行业</td>
+<td class="num">10.08</td>
+<td class="num down">-5.53%</td>
+<td class="ma">MA5 9.74 &gt; MA10 9.14 &gt; MA20 8.72 &gt; MA60 7.42</td>
+<td class="ma">MA5 9.06 &gt; MA10 8.19 &gt; MA20 7.18</td>
+<td class="ma">MA5 7.92 &gt; MA10 7.26 &gt; MA20 6.17</td>
+</tr><tr>
+<td class="idx">12</td>
+<td class="sym">300981.SZ</td>
+<td class="nm">中红医疗</td>
+<td class="ind">医疗器械</td>
+<td class="num">23.00</td>
+<td class="num up">+7.83%</td>
+<td class="ma">MA5 21.89 &gt; MA10 20.22 &gt; MA20 18.26 &gt; MA60 15.49</td>
+<td class="ma">MA5 20.48 &gt; MA10 17.99 &gt; MA20 14.72</td>
+<td class="ma">MA5 16.58 &gt; MA10 14.91 &gt; MA20 13.62</td>
+</tr><tr>
+<td class="idx">13</td>
+<td class="sym">301122.SZ</td>
+<td class="nm">采纳股份</td>
+<td class="ind">医疗器械</td>
+<td class="num">69.75</td>
+<td class="num up">+2.05%</td>
+<td class="ma">MA5 67.38 &gt; MA10 66.10 &gt; MA20 57.42 &gt; MA60 42.01</td>
+<td class="ma">MA5 63.32 &gt; MA10 52.02 &gt; MA20 40.05</td>
+<td class="ma">MA5 47.01 &gt; MA10 38.79 &gt; MA20 31.19</td>
+</tr><tr>
+<td class="idx">14</td>
+<td class="sym">301234.SZ</td>
+<td class="nm">五洲医疗</td>
+<td class="ind">医疗器械</td>
+<td class="num">149.03</td>
+<td class="num up">+4.99%</td>
+<td class="ma">MA5 148.37 &gt; MA10 138.43 &gt; MA20 124.44 &gt; MA60 94.98</td>
+<td class="ma">MA5 133.69 &gt; MA10 116.09 &gt; MA20 81.42</td>
+<td class="ma">MA5 95.83 &gt; MA10 67.71 &gt; MA20 51.86</td>
+</tr><tr>
+<td class="idx">15</td>
+<td class="sym">603976.SH</td>
+<td class="nm">正川股份</td>
+<td class="ind">医疗器械</td>
+<td class="num">32.38</td>
+<td class="num flat">+0.00%</td>
+<td class="ma">MA5 30.89 &gt; MA10 30.78 &gt; MA20 30.68 &gt; MA60 28.69</td>
+<td class="ma">MA5 30.64 &gt; MA10 30.30 &gt; MA20 28.12</td>
+<td class="ma">MA5 29.16 &gt; MA10 24.99 &gt; MA20 22.10</td>
+</tr><tr>
+<td class="idx">16</td>
+<td class="sym">002172.SZ</td>
+<td class="nm">澳洋健康</td>
+<td class="ind">医疗服务</td>
+<td class="num">5.65</td>
+<td class="num down">-4.56%</td>
+<td class="ma">MA5 5.70 &gt; MA10 5.53 &gt; MA20 5.31 &gt; MA60 4.32</td>
+<td class="ma">MA5 5.54 &gt; MA10 4.95 &gt; MA20 4.02</td>
+<td class="ma">MA5 4.28 &gt; MA10 4.14 &gt; MA20 4.04</td>
+</tr><tr>
+<td class="idx">17</td>
+<td class="sym">688315.SH</td>
+<td class="nm">诺禾致源</td>
+<td class="ind">医疗行业</td>
+<td class="num">19.63</td>
+<td class="num down">-4.48%</td>
+<td class="ma">MA5 20.57 &gt; MA10 20.14 &gt; MA20 17.41 &gt; MA60 15.31</td>
+<td class="ma">MA5 19.34 &gt; MA10 17.11 &gt; MA20 15.01</td>
+<td class="ma">MA5 15.88 &gt; MA10 15.27 &gt; MA20 14.93</td>
+</tr><tr>
+<td class="idx">18</td>
+<td class="sym">300006.SZ</td>
+<td class="nm">莱美药业</td>
+<td class="ind">医药制造</td>
+<td class="num">7.90</td>
+<td class="num up">+20.06%</td>
+<td class="ma">MA5 6.38 &gt; MA10 5.92 &gt; MA20 5.57 &gt; MA60 5.34</td>
+<td class="ma">MA5 5.93 &gt; MA10 5.65 &gt; MA20 5.27</td>
+<td class="ma">MA5 5.83 &gt; MA10 5.61 &gt; MA20 4.99</td>
+</tr><tr>
+<td class="idx">19</td>
+<td class="sym">300199.SZ</td>
+<td class="nm">翰宇药业</td>
+<td class="ind">医药制造</td>
+<td class="num">24.88</td>
+<td class="num down">-2.62%</td>
+<td class="ma">MA5 24.56 &gt; MA10 23.95 &gt; MA20 23.69 &gt; MA60 23.25</td>
+<td class="ma">MA5 23.86 &gt; MA10 23.73 &gt; MA20 22.98</td>
+<td class="ma">MA5 22.99 &gt; MA10 21.49 &gt; MA20 20.06</td>
+</tr><tr>
+<td class="idx">20</td>
+<td class="sym">300434.SZ</td>
+<td class="nm">金石亚药</td>
+<td class="ind">医药制造</td>
+<td class="num">12.53</td>
+<td class="num down">-3.47%</td>
+<td class="ma">MA5 12.89 &gt; MA10 12.73 &gt; MA20 11.99 &gt; MA60 11.48</td>
+<td class="ma">MA5 12.71 &gt; MA10 12.08 &gt; MA20 11.15</td>
+<td class="ma">MA5 11.53 &gt; MA10 11.03 &gt; MA20 10.51</td>
+</tr><tr>
+<td class="idx">21</td>
+<td class="sym">688026.SH</td>
+<td class="nm">洁特生物</td>
+<td class="ind">塑胶制品</td>
+<td class="num">25.10</td>
+<td class="num down">-3.20%</td>
+<td class="ma">MA5 26.72 &gt; MA10 26.47 &gt; MA20 24.30 &gt; MA60 18.59</td>
+<td class="ma">MA5 25.53 &gt; MA10 22.07 &gt; MA20 18.02</td>
+<td class="ma">MA5 19.98 &gt; MA10 18.28 &gt; MA20 17.56</td>
+</tr><tr>
+<td class="idx">22</td>
+<td class="sym">600901.SH</td>
+<td class="nm">江苏金租</td>
+<td class="ind">多元金融</td>
+<td class="num">7.30</td>
+<td class="num up">+0.55%</td>
+<td class="ma">MA5 7.13 &gt; MA10 6.98 &gt; MA20 6.87 &gt; MA60 6.65</td>
+<td class="ma">MA5 6.95 &gt; MA10 6.78 &gt; MA20 6.54</td>
+<td class="ma">MA5 6.61 &gt; MA10 6.58 &gt; MA20 6.07</td>
+</tr><tr>
+<td class="idx">23</td>
+<td class="sym">002242.SZ</td>
+<td class="nm">九阳股份</td>
+<td class="ind">家电行业</td>
+<td class="num">17.69</td>
+<td class="num up">+0.11%</td>
+<td class="ma">MA5 16.18 &gt; MA10 13.42 &gt; MA20 11.37 &gt; MA60 9.61</td>
+<td class="ma">MA5 12.83 &gt; MA10 10.86 &gt; MA20 9.64</td>
+<td class="ma">MA5 11.14 &gt; MA10 10.60 &gt; MA20 10.17</td>
+</tr><tr>
+<td class="idx">24</td>
+<td class="sym">600322.SH</td>
+<td class="nm">津投城开</td>
+<td class="ind">房地产服务</td>
+<td class="num">2.69</td>
+<td class="num down">-2.54%</td>
+<td class="ma">MA5 2.77 &gt; MA10 2.75 &gt; MA20 2.73 &gt; MA60 2.67</td>
+<td class="ma">MA5 2.73 &gt; MA10 2.72 &gt; MA20 2.68</td>
+<td class="ma">MA5 2.70 &gt; MA10 2.59 &gt; MA20 2.57</td>
+</tr><tr>
+<td class="idx">25</td>
+<td class="sym">600825.SH</td>
+<td class="nm">新华传媒</td>
+<td class="ind">文化传媒</td>
+<td class="num">13.78</td>
+<td class="num flat">+0.00%</td>
+<td class="ma">MA5 12.37 &gt; MA10 10.10 &gt; MA20 7.66 &gt; MA60 5.81</td>
+<td class="ma">MA5 9.95 &gt; MA10 7.48 &gt; MA20 6.18</td>
+<td class="ma">MA5 7.75 &gt; MA10 6.90 &gt; MA20 6.80</td>
+</tr><tr>
+<td class="idx">26</td>
+<td class="sym">601811.SH</td>
+<td class="nm">新华文轩</td>
+<td class="ind">文化传媒</td>
+<td class="num">23.25</td>
+<td class="num up">+9.98%</td>
+<td class="ma">MA5 21.46 &gt; MA10 20.62 &gt; MA20 16.79 &gt; MA60 13.58</td>
+<td class="ma">MA5 19.91 &gt; MA10 15.77 &gt; MA20 13.85</td>
+<td class="ma">MA5 15.81 &gt; MA10 14.88 &gt; MA20 14.59</td>
+</tr><tr>
+<td class="idx">27</td>
+<td class="sym">600593.SH</td>
+<td class="nm">大连圣亚</td>
+<td class="ind">旅游酒店</td>
+<td class="num">53.10</td>
+<td class="num up">+6.56%</td>
+<td class="ma">MA5 49.18 &gt; MA10 49.05 &gt; MA20 45.48 &gt; MA60 41.50</td>
+<td class="ma">MA5 48.62 &gt; MA10 44.60 &gt; MA20 41.27</td>
+<td class="ma">MA5 43.42 &gt; MA10 40.98 &gt; MA20 38.56</td>
+</tr><tr>
+<td class="idx">28</td>
+<td class="sym">300489.SZ</td>
+<td class="nm">光智科技</td>
+<td class="ind">有色金属</td>
+<td class="num">290.00</td>
+<td class="num down">-3.72%</td>
+<td class="ma">MA5 279.42 &gt; MA10 272.54 &gt; MA20 245.63 &gt; MA60 220.54</td>
+<td class="ma">MA5 268.59 &gt; MA10 246.60 &gt; MA20 227.51</td>
+<td class="ma">MA5 252.11 &gt; MA10 164.02 &gt; MA20 104.57</td>
+</tr><tr>
+<td class="idx">29</td>
+<td class="sym">600337.SH</td>
+<td class="nm">ST美克</td>
+<td class="ind">木业家具</td>
+<td class="num">3.61</td>
+<td class="num down">-0.28%</td>
+<td class="ma">MA5 3.59 &gt; MA10 3.57 &gt; MA20 3.35 &gt; MA60 3.14</td>
+<td class="ma">MA5 3.49 &gt; MA10 3.30 &gt; MA20 3.15</td>
+<td class="ma">MA5 3.29 &gt; MA10 3.04 &gt; MA20 2.62</td>
+</tr><tr>
+<td class="idx">30</td>
+<td class="sym">603757.SH</td>
+<td class="nm">大元泵业</td>
+<td class="ind">机械行业</td>
+<td class="num">67.00</td>
+<td class="num down">-7.33%</td>
+<td class="ma">MA5 71.41 &gt; MA10 70.11 &gt; MA20 68.11 &gt; MA60 65.41</td>
+<td class="ma">MA5 69.36 &gt; MA10 67.16 &gt; MA20 65.25</td>
+<td class="ma">MA5 67.01 &gt; MA10 56.66 &gt; MA20 45.07</td>
+</tr><tr>
+<td class="idx">31</td>
+<td class="sym">001872.SZ</td>
+<td class="nm">招商港口</td>
+<td class="ind">港口水运</td>
+<td class="num">26.25</td>
+<td class="num up">+3.18%</td>
+<td class="ma">MA5 25.17 &gt; MA10 24.46 &gt; MA20 23.82 &gt; MA60 22.85</td>
+<td class="ma">MA5 24.28 &gt; MA10 23.54 &gt; MA20 22.27</td>
+<td class="ma">MA5 23.18 &gt; MA10 22.23 &gt; MA20 20.75</td>
+</tr><tr>
+<td class="idx">32</td>
+<td class="sym">601298.SH</td>
+<td class="nm">青岛港</td>
+<td class="ind">港口水运</td>
+<td class="num">10.19</td>
+<td class="num up">+4.09%</td>
+<td class="ma">MA5 9.98 &gt; MA10 9.94 &gt; MA20 9.78 &gt; MA60 9.19</td>
+<td class="ma">MA5 9.94 &gt; MA10 9.50 &gt; MA20 9.07</td>
+<td class="ma">MA5 9.30 &gt; MA10 9.19 &gt; MA20 8.77</td>
+</tr><tr>
+<td class="idx">33</td>
+<td class="sym">601919.SH</td>
+<td class="nm">中远海控</td>
+<td class="ind">港口水运</td>
+<td class="num">17.30</td>
+<td class="num up">+0.93%</td>
+<td class="ma">MA5 16.92 &gt; MA10 16.64 &gt; MA20 16.48 &gt; MA60 16.07</td>
+<td class="ma">MA5 16.55 &gt; MA10 16.43 &gt; MA20 15.48</td>
+<td class="ma">MA5 15.91 &gt; MA10 15.22 &gt; MA20 14.63</td>
+</tr><tr>
+<td class="idx">34</td>
+<td class="sym">600892.SH</td>
+<td class="nm">大晟文化</td>
+<td class="ind">游戏</td>
+<td class="num">4.55</td>
+<td class="num up">+1.79%</td>
+<td class="ma">MA5 4.37 &gt; MA10 4.24 &gt; MA20 4.18 &gt; MA60 3.97</td>
+<td class="ma">MA5 4.23 &gt; MA10 4.17 &gt; MA20 3.84</td>
+<td class="ma">MA5 4.01 &gt; MA10 3.90 &gt; MA20 3.64</td>
+</tr><tr>
+<td class="idx">35</td>
+<td class="sym">600121.SH</td>
+<td class="nm">郑州煤电</td>
+<td class="ind">煤炭采选</td>
+<td class="num">5.86</td>
+<td class="num up">+9.94%</td>
+<td class="ma">MA5 5.57 &gt; MA10 5.33 &gt; MA20 5.23 &gt; MA60 4.51</td>
+<td class="ma">MA5 5.32 &gt; MA10 4.92 &gt; MA20 4.43</td>
+<td class="ma">MA5 4.69 &gt; MA10 4.61 &gt; MA20 4.38</td>
+</tr><tr>
+<td class="idx">36</td>
+<td class="sym">600403.SH</td>
+<td class="nm">大有能源</td>
+<td class="ind">煤炭采选</td>
+<td class="num">7.63</td>
+<td class="num up">+5.39%</td>
+<td class="ma">MA5 7.39 &gt; MA10 7.28 &gt; MA20 7.19 &gt; MA60 6.60</td>
+<td class="ma">MA5 7.22 &gt; MA10 6.99 &gt; MA20 6.46</td>
+<td class="ma">MA5 6.63 &gt; MA10 6.45 &gt; MA20 5.69</td>
+</tr><tr>
+<td class="idx">37</td>
+<td class="sym">600546.SH</td>
+<td class="nm">山煤国际</td>
+<td class="ind">煤炭采选</td>
+<td class="num">13.71</td>
+<td class="num down">-0.51%</td>
+<td class="ma">MA5 13.69 &gt; MA10 13.45 &gt; MA20 13.44 &gt; MA60 13.11</td>
+<td class="ma">MA5 13.50 &gt; MA10 13.42 &gt; MA20 12.97</td>
+<td class="ma">MA5 12.93 &gt; MA10 12.68 &gt; MA20 11.10</td>
+</tr><tr>
+<td class="idx">38</td>
+<td class="sym">601088.SH</td>
+<td class="nm">中国神华</td>
+<td class="ind">煤炭采选</td>
+<td class="num">50.55</td>
+<td class="num up">+2.14%</td>
+<td class="ma">MA5 49.06 &gt; MA10 48.40 &gt; MA20 47.72 &gt; MA60 46.33</td>
+<td class="ma">MA5 48.20 &gt; MA10 47.49 &gt; MA20 45.62</td>
+<td class="ma">MA5 46.37 &gt; MA10 45.77 &gt; MA20 41.48</td>
+</tr><tr>
+<td class="idx">39</td>
+<td class="sym">601225.SH</td>
+<td class="nm">陕西煤业</td>
+<td class="ind">煤炭采选</td>
+<td class="num">28.08</td>
+<td class="num up">+2.22%</td>
+<td class="ma">MA5 27.29 &gt; MA10 26.55 &gt; MA20 26.20 &gt; MA60 25.64</td>
+<td class="ma">MA5 26.42 &gt; MA10 26.26 &gt; MA20 25.18</td>
+<td class="ma">MA5 25.38 &gt; MA10 25.03 &gt; MA20 22.33</td>
+</tr><tr>
+<td class="idx">40</td>
+<td class="sym">301081.SZ</td>
+<td class="nm">严牌股份</td>
+<td class="ind">环保工程</td>
+<td class="num">19.02</td>
+<td class="num down">-4.80%</td>
+<td class="ma">MA5 19.24 &gt; MA10 18.38 &gt; MA20 17.57 &gt; MA60 14.35</td>
+<td class="ma">MA5 18.04 &gt; MA10 16.24 &gt; MA20 14.88</td>
+<td class="ma">MA5 15.33 &gt; MA10 15.27 &gt; MA20 12.63</td>
+</tr><tr>
+<td class="idx">41</td>
+<td class="sym">688137.SH</td>
+<td class="nm">近岸蛋白</td>
+<td class="ind">生物制品</td>
+<td class="num">143.20</td>
+<td class="num up">+4.40%</td>
+<td class="ma">MA5 147.70 &gt; MA10 141.64 &gt; MA20 115.09 &gt; MA60 74.55</td>
+<td class="ma">MA5 137.81 &gt; MA10 103.91 &gt; MA20 70.76</td>
+<td class="ma">MA5 88.72 &gt; MA10 66.38 &gt; MA20 53.19</td>
+</tr><tr>
+<td class="idx">42</td>
+<td class="sym">688185.SH</td>
+<td class="nm">康希诺</td>
+<td class="ind">生物制品</td>
+<td class="num">84.00</td>
+<td class="num down">-4.59%</td>
+<td class="ma">MA5 92.18 &gt; MA10 90.24 &gt; MA20 78.97 &gt; MA60 66.51</td>
+<td class="ma">MA5 86.95 &gt; MA10 78.35 &gt; MA20 64.58</td>
+<td class="ma">MA5 72.65 &gt; MA10 69.09 &gt; MA20 68.87</td>
+</tr><tr>
+<td class="idx">43</td>
+<td class="sym">688265.SH</td>
+<td class="nm">南模生物</td>
+<td class="ind">生物制品</td>
+<td class="num">52.72</td>
+<td class="num down">-4.54%</td>
+<td class="ma">MA5 57.32 &gt; MA10 56.59 &gt; MA20 49.27 &gt; MA60 42.63</td>
+<td class="ma">MA5 55.11 &gt; MA10 48.33 &gt; MA20 41.32</td>
+<td class="ma">MA5 44.88 &gt; MA10 43.48 &gt; MA20 41.41</td>
+</tr><tr>
+<td class="idx">44</td>
+<td class="sym">600025.SH</td>
+<td class="nm">华能水电</td>
+<td class="ind">电力行业</td>
+<td class="num">10.53</td>
+<td class="num up">+4.05%</td>
+<td class="ma">MA5 10.21 &gt; MA10 9.99 &gt; MA20 9.87 &gt; MA60 9.83</td>
+<td class="ma">MA5 9.99 &gt; MA10 9.83 &gt; MA20 9.73</td>
+<td class="ma">MA5 9.80 &gt; MA10 9.68 &gt; MA20 9.47</td>
+</tr><tr>
+<td class="idx">45</td>
+<td class="sym">600674.SH</td>
+<td class="nm">川投能源</td>
+<td class="ind">电力行业</td>
+<td class="num">17.51</td>
+<td class="num up">+1.98%</td>
+<td class="ma">MA5 17.14 &gt; MA10 16.77 &gt; MA20 16.36 &gt; MA60 15.86</td>
+<td class="ma">MA5 16.64 &gt; MA10 16.06 &gt; MA20 15.58</td>
+<td class="ma">MA5 15.93 &gt; MA10 15.37 &gt; MA20 15.12</td>
+</tr><tr>
+<td class="idx">46</td>
+<td class="sym">600795.SH</td>
+<td class="nm">国电电力</td>
+<td class="ind">电力行业</td>
+<td class="num">5.41</td>
+<td class="num up">+0.74%</td>
+<td class="ma">MA5 5.42 &gt; MA10 5.36 &gt; MA20 5.32 &gt; MA60 5.15</td>
+<td class="ma">MA5 5.34 &gt; MA10 5.27 &gt; MA20 5.07</td>
+<td class="ma">MA5 5.14 &gt; MA10 5.00 &gt; MA20 4.82</td>
+</tr><tr>
+<td class="idx">47</td>
+<td class="sym">600886.SH</td>
+<td class="nm">国投电力</td>
+<td class="ind">电力行业</td>
+<td class="num">16.26</td>
+<td class="num up">+2.39%</td>
+<td class="ma">MA5 15.90 &gt; MA10 15.47 &gt; MA20 14.94 &gt; MA60 14.59</td>
+<td class="ma">MA5 15.29 &gt; MA10 14.63 &gt; MA20 14.32</td>
+<td class="ma">MA5 14.75 &gt; MA10 14.19 &gt; MA20 14.02</td>
+</tr><tr>
+<td class="idx">48</td>
+<td class="sym">600900.SH</td>
+<td class="nm">长江电力</td>
+<td class="ind">电力行业</td>
+<td class="num">29.45</td>
+<td class="num up">+1.03%</td>
+<td class="ma">MA5 29.17 &gt; MA10 28.78 &gt; MA20 28.54 &gt; MA60 28.43</td>
+<td class="ma">MA5 28.72 &gt; MA10 28.46 &gt; MA20 28.13</td>
+<td class="ma">MA5 28.33 &gt; MA10 27.61 &gt; MA20 27.52</td>
+</tr><tr>
+<td class="idx">49</td>
+<td class="sym">601985.SH</td>
+<td class="nm">中国核电</td>
+<td class="ind">电力行业</td>
+<td class="num">9.42</td>
+<td class="num up">+3.18%</td>
+<td class="ma">MA5 9.20 &gt; MA10 9.08 &gt; MA20 9.04 &gt; MA60 8.95</td>
+<td class="ma">MA5 9.09 &gt; MA10 9.00 &gt; MA20 8.98</td>
+<td class="ma">MA5 9.09 &gt; MA10 8.97 &gt; MA20 8.91</td>
+</tr><tr>
+<td class="idx">50</td>
+<td class="sym">002388.SZ</td>
+<td class="nm">新亚制程</td>
+<td class="ind">电子元件</td>
+<td class="num">9.10</td>
+<td class="num flat">+0.00%</td>
+<td class="ma">MA5 8.40 &gt; MA10 8.01 &gt; MA20 7.18 &gt; MA60 5.89</td>
+<td class="ma">MA5 7.88 &gt; MA10 6.92 &gt; MA20 5.94</td>
+<td class="ma">MA5 6.95 &gt; MA10 6.16 &gt; MA20 5.50</td>
+</tr><tr>
+<td class="idx">51</td>
+<td class="sym">301310.SZ</td>
+<td class="nm">鑫宏业</td>
+<td class="ind">电网设备</td>
+<td class="num">57.50</td>
+<td class="num down">-12.98%</td>
+<td class="ma">MA5 62.92 &gt; MA10 60.58 &gt; MA20 56.75 &gt; MA60 55.44</td>
+<td class="ma">MA5 57.33 &gt; MA10 55.11 &gt; MA20 52.11</td>
+<td class="ma">MA5 55.96 &gt; MA10 49.98 &gt; MA20 40.57</td>
+</tr><tr>
+<td class="idx">52</td>
+<td class="sym">002832.SZ</td>
+<td class="nm">比音勒芬</td>
+<td class="ind">纺织服装</td>
+<td class="num">26.68</td>
+<td class="num up">+0.91%</td>
+<td class="ma">MA5 26.86 &gt; MA10 26.11 &gt; MA20 25.81 &gt; MA60 25.06</td>
+<td class="ma">MA5 26.23 &gt; MA10 25.76 &gt; MA20 23.79</td>
+<td class="ma">MA5 24.92 &gt; MA10 21.22 &gt; MA20 18.36</td>
+</tr><tr>
+<td class="idx">53</td>
+<td class="sym">600177.SH</td>
+<td class="nm">雅戈尔</td>
+<td class="ind">纺织服装</td>
+<td class="num">8.58</td>
+<td class="num up">+0.12%</td>
+<td class="ma">MA5 8.48 &gt; MA10 8.39 &gt; MA20 8.33 &gt; MA60 8.03</td>
+<td class="ma">MA5 8.35 &gt; MA10 8.20 &gt; MA20 7.91</td>
+<td class="ma">MA5 8.07 &gt; MA10 7.79 &gt; MA20 7.41</td>
+</tr><tr>
+<td class="idx">54</td>
+<td class="sym">600400.SH</td>
+<td class="nm">红豆股份</td>
+<td class="ind">纺织服装</td>
+<td class="num">4.27</td>
+<td class="num up">+7.02%</td>
+<td class="ma">MA5 3.96 &gt; MA10 3.65 &gt; MA20 3.45 &gt; MA60 3.10</td>
+<td class="ma">MA5 3.68 &gt; MA10 3.36 &gt; MA20 3.13</td>
+<td class="ma">MA5 3.31 &gt; MA10 2.91 &gt; MA20 2.65</td>
+</tr><tr>
+<td class="idx">55</td>
+<td class="sym">301108.SZ</td>
+<td class="nm">洁雅股份</td>
+<td class="ind">美容护理</td>
+<td class="num">51.77</td>
+<td class="num down">-2.06%</td>
+<td class="ma">MA5 52.61 &gt; MA10 52.54 &gt; MA20 47.82 &gt; MA60 39.68</td>
+<td class="ma">MA5 50.71 &gt; MA10 44.62 &gt; MA20 36.33</td>
+<td class="ma">MA5 40.57 &gt; MA10 34.92 &gt; MA20 30.91</td>
+</tr><tr>
+<td class="idx">56</td>
+<td class="sym">688237.SH</td>
+<td class="nm">超卓航科</td>
+<td class="ind">航天航空</td>
+<td class="num">59.08</td>
+<td class="num down">-4.17%</td>
+<td class="ma">MA5 59.14 &gt; MA10 58.93 &gt; MA20 58.56 &gt; MA60 57.74</td>
+<td class="ma">MA5 58.68 &gt; MA10 58.16 &gt; MA20 56.58</td>
+<td class="ma">MA5 55.95 &gt; MA10 53.17 &gt; MA20 46.05</td>
+</tr><tr>
+<td class="idx">57</td>
+<td class="sym">601083.SH</td>
+<td class="nm">锦江航运</td>
+<td class="ind">航运港口</td>
+<td class="num">13.73</td>
+<td class="num up">+0.88%</td>
+<td class="ma">MA5 13.43 &gt; MA10 13.07 &gt; MA20 12.79 &gt; MA60 12.05</td>
+<td class="ma">MA5 13.01 &gt; MA10 12.64 &gt; MA20 11.70</td>
+<td class="ma">MA5 12.21 &gt; MA10 12.08 &gt; MA20 11.37</td>
+</tr><tr>
+<td class="idx">58</td>
+<td class="sym">300234.SZ</td>
+<td class="nm">开尔新材</td>
+<td class="ind">装修建材</td>
+<td class="num">11.60</td>
+<td class="num down">-1.19%</td>
+<td class="ma">MA5 11.23 &gt; MA10 10.91 &gt; MA20 10.87 &gt; MA60 9.64</td>
+<td class="ma">MA5 11.21 &gt; MA10 10.53 &gt; MA20 10.03</td>
+<td class="ma">MA5 10.40 &gt; MA10 8.54 &gt; MA20 6.87</td>
+</tr><tr>
+<td class="idx">59</td>
+<td class="sym">300599.SZ</td>
+<td class="nm">雄塑科技</td>
+<td class="ind">装修建材</td>
+<td class="num">13.13</td>
+<td class="num down">-7.60%</td>
+<td class="ma">MA5 14.12 &gt; MA10 13.96 &gt; MA20 12.78 &gt; MA60 11.52</td>
+<td class="ma">MA5 13.28 &gt; MA10 12.36 &gt; MA20 11.65</td>
+<td class="ma">MA5 11.70 &gt; MA10 11.29 &gt; MA20 9.55</td>
+</tr><tr>
+<td class="idx">60</td>
+<td class="sym">002789.SZ</td>
+<td class="nm">*ST建艺</td>
+<td class="ind">装修装饰</td>
+<td class="num">14.90</td>
+<td class="num up">+0.61%</td>
+<td class="ma">MA5 14.38 &gt; MA10 14.21 &gt; MA20 13.85 &gt; MA60 11.37</td>
+<td class="ma">MA5 14.35 &gt; MA10 12.89 &gt; MA20 12.09</td>
+<td class="ma">MA5 12.39 &gt; MA10 12.02 &gt; MA20 10.52</td>
+</tr><tr>
+<td class="idx">61</td>
+<td class="sym">301218.SZ</td>
+<td class="nm">华是科技</td>
+<td class="ind">软件开发</td>
+<td class="num">69.04</td>
+<td class="num up">+4.12%</td>
+<td class="ma">MA5 70.42 &gt; MA10 63.40 &gt; MA20 54.34 &gt; MA60 47.50</td>
+<td class="ma">MA5 61.84 &gt; MA10 54.14 &gt; MA20 47.78</td>
+<td class="ma">MA5 55.93 &gt; MA10 45.43 &gt; MA20 33.46</td>
+</tr><tr>
+<td class="idx">62</td>
+<td class="sym">300311.SZ</td>
+<td class="nm">任子行</td>
+<td class="ind">软件服务</td>
+<td class="num">6.00</td>
+<td class="num down">-3.23%</td>
+<td class="ma">MA5 6.16 &gt; MA10 6.11 &gt; MA20 5.97 &gt; MA60 5.74</td>
+<td class="ma">MA5 6.03 &gt; MA10 5.87 &gt; MA20 5.62</td>
+<td class="ma">MA5 5.65 &gt; MA10 5.47 &gt; MA20 5.36</td>
+</tr><tr>
+<td class="idx">63</td>
+<td class="sym">300369.SZ</td>
+<td class="nm">绿盟科技</td>
+<td class="ind">软件服务</td>
+<td class="num">11.05</td>
+<td class="num flat">+0.00%</td>
+<td class="ma">MA5 10.47 &gt; MA10 9.78 &gt; MA20 9.11 &gt; MA60 7.85</td>
+<td class="ma">MA5 9.58 &gt; MA10 8.56 &gt; MA20 7.42</td>
+<td class="ma">MA5 8.15 &gt; MA10 8.05 &gt; MA20 7.90</td>
+</tr><tr>
+<td class="idx">64</td>
+<td class="sym">301419.SZ</td>
+<td class="nm">阿莱德</td>
+<td class="ind">通信设备</td>
+<td class="num">46.99</td>
+<td class="num down">-3.17%</td>
+<td class="ma">MA5 44.73 &gt; MA10 44.38 &gt; MA20 43.61 &gt; MA60 36.89</td>
+<td class="ma">MA5 44.33 &gt; MA10 41.25 &gt; MA20 39.33</td>
+<td class="ma">MA5 41.15 &gt; MA10 39.35 &gt; MA20 32.72</td>
+</tr><tr>
+<td class="idx">65</td>
+<td class="sym">603727.SH</td>
+<td class="nm">博迈科</td>
+<td class="ind">采掘行业</td>
+<td class="num">20.55</td>
+<td class="num up">+6.15%</td>
+<td class="ma">MA5 20.07 &gt; MA10 19.37 &gt; MA20 18.52 &gt; MA60 17.99</td>
+<td class="ma">MA5 19.21 &gt; MA10 18.66 &gt; MA20 17.43</td>
+<td class="ma">MA5 18.47 &gt; MA10 17.97 &gt; MA20 15.91</td>
+</tr><tr>
+<td class="idx">66</td>
+<td class="sym">002142.SZ</td>
+<td class="nm">宁波银行</td>
+<td class="ind">银行</td>
+<td class="num">35.09</td>
+<td class="num down">-1.15%</td>
+<td class="ma">MA5 35.53 &gt; MA10 35.20 &gt; MA20 35.11 &gt; MA60 33.53</td>
+<td class="ma">MA5 35.06 &gt; MA10 34.54 &gt; MA20 32.93</td>
+<td class="ma">MA5 33.24 &gt; MA10 32.31 &gt; MA20 29.11</td>
+</tr><tr>
+<td class="idx">67</td>
+<td class="sym">002966.SZ</td>
+<td class="nm">苏州银行</td>
+<td class="ind">银行</td>
+<td class="num">9.28</td>
+<td class="num down">-0.96%</td>
+<td class="ma">MA5 9.41 &gt; MA10 9.31 &gt; MA20 9.24 &gt; MA60 8.73</td>
+<td class="ma">MA5 9.25 &gt; MA10 9.05 &gt; MA20 8.44</td>
+<td class="ma">MA5 8.58 &gt; MA10 8.43 &gt; MA20 8.21</td>
+</tr><tr>
+<td class="idx">68</td>
+<td class="sym">600919.SH</td>
+<td class="nm">江苏银行</td>
+<td class="ind">银行</td>
+<td class="num">12.41</td>
+<td class="num up">+0.08%</td>
+<td class="ma">MA5 12.46 &gt; MA10 12.34 &gt; MA20 12.32 &gt; MA60 11.97</td>
+<td class="ma">MA5 12.32 &gt; MA10 12.21 &gt; MA20 11.81</td>
+<td class="ma">MA5 11.90 &gt; MA10 11.35 &gt; MA20 10.77</td>
+</tr><tr>
+<td class="idx">69</td>
+<td class="sym">601288.SH</td>
+<td class="nm">农业银行</td>
+<td class="ind">银行</td>
+<td class="num">7.18</td>
+<td class="num down">-0.97%</td>
+<td class="ma">MA5 7.12 &gt; MA10 7.01 &gt; MA20 6.95 &gt; MA60 6.78</td>
+<td class="ma">MA5 6.96 &gt; MA10 6.88 &gt; MA20 6.65</td>
+<td class="ma">MA5 6.81 &gt; MA10 6.71 &gt; MA20 6.53</td>
+</tr><tr>
+<td class="idx">70</td>
+<td class="sym">601398.SH</td>
+<td class="nm">工商银行</td>
+<td class="ind">银行</td>
+<td class="num">8.45</td>
+<td class="num down">-0.47%</td>
+<td class="ma">MA5 8.38 &gt; MA10 8.27 &gt; MA20 8.19 &gt; MA60 7.92</td>
+<td class="ma">MA5 8.23 &gt; MA10 8.06 &gt; MA20 7.76</td>
+<td class="ma">MA5 7.97 &gt; MA10 7.63 &gt; MA20 7.41</td>
+</tr><tr>
+<td class="idx">71</td>
+<td class="sym">601939.SH</td>
+<td class="nm">建设银行</td>
+<td class="ind">银行</td>
+<td class="num">11.40</td>
+<td class="num up">+0.26%</td>
+<td class="ma">MA5 11.24 &gt; MA10 11.11 &gt; MA20 11.02 &gt; MA60 10.65</td>
+<td class="ma">MA5 11.05 &gt; MA10 10.87 &gt; MA20 10.51</td>
+<td class="ma">MA5 10.78 &gt; MA10 10.08 &gt; MA20 9.46</td>
+</tr><tr>
+<td class="idx">72</td>
+<td class="sym">601988.SH</td>
+<td class="nm">中国银行</td>
+<td class="ind">银行</td>
+<td class="num">7.03</td>
+<td class="num down">-0.57%</td>
+<td class="ma">MA5 6.93 &gt; MA10 6.79 &gt; MA20 6.68 &gt; MA60 6.28</td>
+<td class="ma">MA5 6.74 &gt; MA10 6.50 &gt; MA20 6.20</td>
+<td class="ma">MA5 6.41 &gt; MA10 6.02 &gt; MA20 5.72</td>
+</tr><tr>
+<td class="idx">73</td>
+<td class="sym">601998.SH</td>
+<td class="nm">中信银行</td>
+<td class="ind">银行</td>
+<td class="num">9.27</td>
+<td class="num up">+0.76%</td>
+<td class="ma">MA5 9.16 &gt; MA10 9.11 &gt; MA20 9.02 &gt; MA60 8.35</td>
+<td class="ma">MA5 9.07 &gt; MA10 8.80 &gt; MA20 8.09</td>
+<td class="ma">MA5 8.39 &gt; MA10 8.05 &gt; MA20 7.72</td>
+</tr>
+</tbody>
+</table>
+
+<footer>
+数据来源：本地 quant.db 日线历史 + 腾讯行情今日（2026-10-14）收盘补齐。<br>
+口径提示：今日为周三，本周/本月 K 线尚未走完，当前周线、月线按最新收盘实时计算（与通达信等行情软件一致）。<br>
+前复权口径：本地历史为长周期序列，个别个股近期除权会使趋势略有偏差，交易前请以行情软件复核。<br>
+本报告仅为技术面形态统计，不构成任何投资建议。
+</footer>
+</div>
+</body>
+</html>

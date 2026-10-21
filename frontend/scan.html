@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>策略选股 · 蚂蚁量化系统</title>
+<style>
+  :root{--up:#E03131;--down:#2F9E44;--brand:#0969DA;--ink:#1A1D24;--ink2:#5B6270;--ink3:#8A8F99;--line:#E7E9EE;--bg:#F4F5F7;--card:#FFFFFF;--shadow:0 1px 2px rgba(16,24,40,.04),0 1px 3px rgba(16,24,40,.06);--radius:14px;--mono:"SF Mono",ui-monospace,Menlo,monospace}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:var(--bg);font-size:14px;line-height:1.5}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .app{display:grid;grid-template-columns:228px 1fr;min-height:100vh}
+  .sidebar{background:#0E2A52;color:#D6E4F5;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+  .brand{display:flex;align-items:center;gap:10px;padding:20px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .brand .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#1C7ED6,#4DABF7);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
+  .brand .name{font-size:16px;font-weight:700;color:#fff}
+  .brand .sub{font-size:11px;color:#8FA9C9;margin-top:1px}
+  .nav{padding:12px 10px;flex:1;overflow-y:auto}
+  .nav a{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:#C7D8EC;text-decoration:none;font-size:14px;margin-bottom:2px}
+  .nav a:hover{background:rgba(255,255,255,.07);color:#fff}
+  .nav a.active{background:#1C7ED6;color:#fff;font-weight:600}
+  .sidebar .foot{padding:14px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;color:#7E97B8}
+  .main{display:flex;flex-direction:column;min-width:0}
+  .topbar{height:60px;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;padding:0 24px;position:sticky;top:0;z-index:10}
+  .topbar .crumb{font-size:15px;font-weight:650}
+  .btn{border:1px solid var(--line);background:var(--card);border-radius:9px;padding:7px 14px;font-size:13px;color:var(--ink2);cursor:pointer}
+  .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#4DABF7,#37B24D);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+  .content{padding:22px 24px 40px;max-width:1380px;width:100%;margin:0 auto}
+  .page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .page-head h1{font-size:20px;font-weight:700}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px}
+  .panel .hd{display:flex;align-items:center;justify-content:space-between;padding:13px 16px 10px;border-bottom:1px solid var(--line)}
+  .panel .hd .t{font-size:14px;font-weight:650}
+  .panel .bd{padding:20px}
+  .search-box{display:flex;gap:12px;align-items:center;margin-bottom:16px}
+  .search-box input{flex:1;height:42px;border:1px solid var(--line);border-radius:10px;padding:0 16px;font-size:15px;outline:none;transition:border .2s}
+  .search-box input:focus{border-color:var(--brand)}
+  .search-box .btn{height:42px;padding:0 24px;font-size:14px;display:flex;align-items:center;gap:6px}
+  .cond-group{margin-bottom:16px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .cond-group:last-child{margin-bottom:0}
+  .cond-group-hd{display:flex;align-items:center;gap:8px;padding:10px 14px;background:#F8FAFC;border-bottom:1px solid var(--line);cursor:pointer;user-select:none}
+  .cond-group-hd .arrow{font-size:10px;color:var(--ink3);transition:transform .2s}
+  .cond-group.collapsed .arrow{transform:rotate(-90deg)}
+  .cond-group-hd .gtitle{font-size:13px;font-weight:700;color:var(--ink)}
+  .cond-group-hd .gdesc{font-size:11px;color:var(--ink3);margin-left:auto}
+  .cond-group-bd{padding:10px 14px 12px;display:flex;flex-wrap:wrap;gap:8px}
+  .cond-group.collapsed .cond-group-bd{display:none}
+  .cond-sub{margin-bottom:6px}
+  .cond-sub-title{font-size:11px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;padding-left:2px}
+  .tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:0}
+  .tag{padding:6px 14px;border-radius:20px;font-size:13px;cursor:pointer;border:1px solid var(--line);background:var(--bg);color:var(--ink2);transition:all .15s}
+  .tag:hover{border-color:var(--brand);color:var(--brand)}
+  .tag.active{background:var(--brand);color:#fff;border-color:var(--brand);cursor:default;opacity:.7}
+  .tag.fund{border-color:#DBE4FF;background:#F1F3FF;color:#3B5BDB}
+  .tag.fund:hover{border-color:#3B5BDB;color:#3B5BDB}
+  .tag.fund.active{background:#3B5BDB;color:#fff;border-color:#3B5BDB}
+  .tag.tech{border-color:#D3F9D8;background:#EBFBEE;color:#2B8A3E}
+  .tag.tech:hover{border-color:#2B8A3E;color:#2B8A3E}
+  .tag.tech.active{background:#2B8A3E;color:#fff;border-color:#2B8A3E}
+  .tag.ind{border-color:#FFE8CC;background:#FFF4E6;color:#E67700}
+  .tag.ind:hover{border-color:#E67700;color:#E67700}
+  .tag.ind.active{background:#E67700;color:#fff;border-color:#E67700}
+  .result-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .result-head .count{font-size:13px;color:var(--ink3)}
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;padding:10px 12px;font-size:12px;font-weight:600;color:var(--ink3);text-transform:uppercase;letter-spacing:.3px;border-bottom:1px solid var(--line);background:#FAFBFC}
+  td{padding:10px 12px;font-size:13px;border-bottom:1px solid #F0F2F5}
+  tr:hover td{background:#F8F9FB}
+  .up{color:var(--up);font-weight:600}
+  .down{color:var(--down);font-weight:600}
+  .flat{color:var(--ink3)}
+  .empty{text-align:center;padding:60px 20px;color:var(--ink3)}
+  .empty .icon{font-size:48px;margin-bottom:12px}
+  .empty p{font-size:14px}
+  .loading-spinner{display:inline-block;width:16px;height:16px;border:2px solid var(--line);border-top-color:var(--brand);border-radius:50%;animation:spin .6s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .help-text{font-size:12px;color:var(--ink3);margin-top:8px;line-height:1.6}
+  .history-panel{margin-top:16px;padding:14px 16px;background:#FAFBFC;border:1px solid var(--line);border-radius:10px}
+  .history-panel .hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .history-panel .hd .t{font-size:13px;font-weight:650;color:var(--ink)}
+  .history-panel .hd .clear-btn{font-size:12px;color:var(--ink3);cursor:pointer;padding:4px 10px;border-radius:6px;transition:all .15s}
+  .history-panel .hd .clear-btn:hover{background:#F1F3F5;color:var(--ink)}
+  .history-list{display:flex;flex-wrap:wrap;gap:8px}
+  .history-item{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:#fff;border:1px solid var(--line);border-radius:8px;font-size:13px;color:var(--ink2);cursor:pointer;transition:all .15s}
+  .history-item:hover{border-color:var(--brand);color:var(--brand)}
+  .history-item .del{font-size:14px;color:var(--ink3);cursor:pointer;margin-left:4px;padding:0 2px;line-height:1}
+  .history-item .del:hover{color:#E03131}
+  .history-empty{font-size:12px;color:var(--ink3);padding:8px 0}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">Q</div><div><div class="name">蚂蚁量化系统</div><div class="sub">个人量化交易平台</div></div></div>
+    <nav class="nav">
+      <a href="/"><span>📊</span>总览首页</a>
+      <a href="/positions"><span>💼</span>持仓管理</a>
+      <a href="/market"><span>🌍</span>市场洞察</a>
+      <a href="/strategies"><span>📈</span>策略管理</a>
+      <a class="active" href="/scan"><span>🔍</span>策略选股</a>
+      <a href="/data"><span>💾</span>数据中心</a>
+      <a href="/trades"><span>📋</span>交易记录</a>
+      <a href="/paper"><span>🎮</span>模拟交易</a>
+      <a href="/watchlist"><span>⭐</span>自选股票</a>
+      <a href="/sequoia"><span>🎯</span>Sequoia选股</a>
+    </nav>
+    <div class="foot"><div>数据源：AKShare</div></div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <span class="crumb">策略选股</span>
+      <div style="flex:1"></div>
+      <div class="avatar">乔</div>
+    </div>
+
+    <div class="content">
+      <div class="page-head"><h1>策略选股</h1></div>
+
+      <div class="panel">
+        <div class="hd"><span class="t">选股条件</span></div>
+        <div class="bd">
+          <div class="search-box">
+            <input type="text" id="conditionInput" placeholder="输入选股条件，多个条件用 + 连接（需同时满足），如：今日涨停+放量上涨+换手率大于5%" />
+            <button class="btn primary" id="scanBtn" onclick="doScan()">🔍 全市场扫描</button>
+          </div>
+          <!-- 基本面 -->
+          <div class="cond-group" id="grpFund">
+            <div class="cond-group-hd" onclick="toggleGroup('grpFund')">
+              <span class="arrow">▼</span>
+              <span class="gtitle">基本面</span>
+              <span class="gdesc">估值 / 市值 / 换手率 / 特殊</span>
+            </div>
+            <div class="cond-group-bd">
+              <div style="width:100%">
+                <div class="cond-sub">
+                  <div class="cond-sub-title">估值</div>
+                  <div class="tags">
+                    <span class="tag fund" data-c="PE小于20">低PE(&lt;20)</span>
+                    <span class="tag fund" data-c="PE大于50">高PE(&gt;50)</span>
+                  </div>
+                </div>
+                <div class="cond-sub">
+                  <div class="cond-sub-title">市值</div>
+                  <div class="tags">
+                    <span class="tag fund" data-c="市值大于500亿">大市值(&gt;500亿)</span>
+                    <span class="tag fund" data-c="市值小于50亿">小市值(&lt;50亿)</span>
+                  </div>
+                </div>
+                <div class="cond-sub">
+                  <div class="cond-sub-title">换手率</div>
+                  <div class="tags">
+                    <span class="tag fund" data-c="换手率大于5%">高换手(&gt;5%)</span>
+                    <span class="tag fund" data-c="换手率小于1%">低换手(&lt;1%)</span>
+                  </div>
+                </div>
+                <div class="cond-sub">
+                  <div class="cond-sub-title">特殊</div>
+                  <div class="tags">
+                    <span class="tag fund" data-c="ST股票">ST股票</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 技术面 -->
+          <div class="cond-group" id="grpTech">
+            <div class="cond-group-hd" onclick="toggleGroup('grpTech')">
+              <span class="arrow">▼</span>
+              <span class="gtitle">技术面</span>
+              <span class="gdesc">走势 / 量价</span>
+            </div>
+            <div class="cond-group-bd">
+              <div style="width:100%">
+                <div class="cond-sub">
+                  <div class="cond-sub-title">走势</div>
+                  <div class="tags">
+                    <span class="tag tech" data-c="今日涨停">今日涨停</span>
+                    <span class="tag tech" data-c="今日跌停">今日跌停</span>
+                    <span class="tag tech" data-c="涨幅大于5%">涨幅&gt;5%</span>
+                    <span class="tag tech" data-c="跌幅大于5%">跌幅&gt;5%</span>
+                    <span class="tag tech" data-c="创历史新高">创历史新高</span>
+                  </div>
+                </div>
+                <div class="cond-sub">
+                  <div class="cond-sub-title">量价</div>
+                  <div class="tags">
+                    <span class="tag tech" data-c="放量上涨">放量上涨</span>
+                    <span class="tag tech" data-c="缩量下跌">缩量下跌</span>
+                    <span class="tag tech" data-c="放量">放量</span>
+                    <span class="tag tech" data-c="缩量">缩量</span>
+                    <span class="tag tech" data-c="成交活跃">成交活跃</span>
+                    <span class="tag tech" data-c="高价">高价股(&gt;100)</span>
+                    <span class="tag tech" data-c="低价">低价股(&lt;10)</span>
+                  </div>
+                </div>
+                <div class="cond-sub">
+                  <div class="cond-sub-title">技术指标</div>
+                  <div class="tags">
+                    <span class="tag tech" data-c="日线MACD>0">日线MACD&gt;0</span>
+                    <span class="tag tech" data-c="周线MACD>0">周线MACD&gt;0</span>
+                    <span class="tag tech" data-c="月线MACD>0">月线MACD&gt;0</span>
+                    <span class="tag tech" data-c="MACD日线金叉">MACD日线金叉</span>
+                    <span class="tag tech" data-c="MACD周线金叉">MACD周线金叉</span>
+                    <span class="tag tech" data-c="KDJ日线金叉">KDJ日线金叉</span>
+                    <span class="tag tech" data-c="KDJ周线金叉">KDJ周线金叉</span>
+                    <span class="tag tech" data-c="日线多头排列">日线多头排列</span>
+                    <span class="tag tech" data-c="周线多头排列">周线多头排列</span>
+                    <span class="tag tech" data-c="月线多头排列">月线多头排列</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 行业板块 -->
+          <div class="cond-group" id="grpInd">
+            <div class="cond-group-hd" onclick="toggleGroup('grpInd')">
+              <span class="arrow">▼</span>
+              <span class="gtitle">行业板块</span>
+              <span class="gdesc">按行业筛选</span>
+            </div>
+            <div class="cond-group-bd">
+              <div class="tags">
+                <span class="tag ind" data-c="科技股">科技</span>
+                <span class="tag ind" data-c="新能源">新能源</span>
+                <span class="tag ind" data-c="消费股">消费</span>
+                <span class="tag ind" data-c="医药">医药</span>
+                <span class="tag ind" data-c="金融">金融</span>
+                <span class="tag ind" data-c="半导体">半导体</span>
+                <span class="tag ind" data-c="芯片">芯片</span>
+                <span class="tag ind" data-c="AI">AI</span>
+                <span class="tag ind" data-c="光伏">光伏</span>
+                <span class="tag ind" data-c="锂电">锂电</span>
+                <span class="tag ind" data-c="白酒">白酒</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="help-text">
+            多个条件用 + 连接，逻辑为「且」（所有条件需同时满足）。每个条件只能选择一次。点击分类标题可折叠/展开。
+          </div>
+          <div class="history-panel">
+            <div class="hd">
+              <span class="t">历史条件</span>
+              <span class="clear-btn" onclick="clearHistory()">清空</span>
+            </div>
+            <div class="history-list" id="historyList">
+              <div class="history-empty">暂无历史条件</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="resultPanel" style="display:none">
+        <div class="result-head">
+          <span class="t" style="font-size:14px;font-weight:650" id="resultTitle">扫描结果</span>
+          <span class="count" id="resultCount"></span>
+        </div>
+        <div class="panel">
+          <table>
+            <thead>
+              <tr>
+                <th>代码</th>
+                <th>名称</th>
+                <th>最新价</th>
+                <th>涨跌幅</th>
+                <th>成交额(万)</th>
+                <th>换手率</th>
+                <th>市盈率</th>
+                <th>总市值(亿)</th>
+              </tr>
+            </thead>
+            <tbody id="resultBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="emptyState" class="empty">
+        <div class="icon">🔍</div>
+        <p>输入选股条件，点击「全市场扫描」开始筛选</p>
+      </div>
+
+      <div id="loadingState" style="display:none;text-align:center;padding:40px">
+        <div class="loading-spinner"></div>
+        <p style="margin-top:12px;color:var(--ink3)">正在全市场扫描，请稍候...</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/api.js"></script>
+<script>
+// 历史条件管理
+const HISTORY_KEY = 'quant_scan_history';
+const MAX_HISTORY = 20;
+
+function getHistory() {
+  try {
+    return JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+  } catch { return []; }
+}
+
+function saveHistory(condition) {
+  if (!condition) return;
+  let history = getHistory();
+  // 去重：如果已存在则移到最前面
+  history = history.filter(h => h !== condition);
+  history.unshift(condition);
+  // 限制数量
+  if (history.length > MAX_HISTORY) history = history.slice(0, MAX_HISTORY);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  renderHistory();
+}
+
+function deleteHistory(condition) {
+  let history = getHistory();
+  history = history.filter(h => h !== condition);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  renderHistory();
+}
+
+function clearHistory() {
+  if (!confirm('确定清空所有历史条件？')) return;
+  localStorage.removeItem(HISTORY_KEY);
+  renderHistory();
+}
+
+function useHistory(condition) {
+  const input = document.getElementById('conditionInput');
+  input.value = condition;
+  input.focus();
+}
+
+function renderHistory() {
+  const list = document.getElementById('historyList');
+  const history = getHistory();
+  if (history.length === 0) {
+    list.innerHTML = '<div class="history-empty">暂无历史条件</div>';
+    return;
+  }
+  list.innerHTML = history.map(h => `
+    <div class="history-item" onclick="useHistory('${h.replace(/'/g, "\\'")}')">
+      <span>${h}</span>
+      <span class="del" onclick="event.stopPropagation();deleteHistory('${h.replace(/'/g, "\\'")}')">×</span>
+    </div>
+  `).join('');
+}
+
+// 页面加载时渲染历史
+renderHistory();
+
+// Toggle condition group collapse
+function toggleGroup(id) {
+  document.getElementById(id).classList.toggle('collapsed');
+}
+
+// Quick tags click
+document.querySelectorAll('.tag').forEach(function(tag) {
+  tag.addEventListener('click', function() {
+    if (this.classList.contains('active')) return;
+    var input = document.getElementById('conditionInput');
+    var c = this.getAttribute('data-c');
+    if (input.value.trim() && !input.value.trim().endsWith('+')) {
+      input.value += '+';
+    }
+    input.value += c;
+    this.classList.add('active');
+    input.focus();
+  });
+});
+
+// Enter key
+document.getElementById('conditionInput').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') doScan();
+});
+
+async function doScan() {
+  var condition = document.getElementById('conditionInput').value.trim();
+  if (!condition) { alert('请输入选股条件'); return; }
+
+  // 保存历史条件
+  saveHistory(condition);
+
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('resultPanel').style.display = 'none';
+  document.getElementById('loadingState').style.display = 'block';
+  document.getElementById('scanBtn').disabled = true;
+
+  try {
+    var result = await api.scanStocks(condition);
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('resultPanel').style.display = 'block';
+    document.getElementById('resultTitle').textContent = '扫描结果 — ' + condition;
+
+    var stocks = result.stocks || [];
+    document.getElementById('resultCount').textContent = '共找到 ' + stocks.length + ' 只股票';
+
+    if (stocks.length === 0) {
+      document.getElementById('resultBody').innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--ink3)">未找到符合条件的股票</td></tr>';
+    } else {
+      document.getElementById('resultBody').innerHTML = stocks.map(function(s) {
+        var pct = s.pct_change || 0;
+        var cls = pct > 0 ? 'up' : (pct < 0 ? 'down' : 'flat');
+        var pctStr = (pct > 0 ? '+' : '') + pct.toFixed(2) + '%';
+        var amount = s.amount ? (s.amount / 10000).toFixed(0) : '--';
+        var turnover = s.turnover_rate ? s.turnover_rate.toFixed(2) + '%' : '--';
+        var pe = s.pe_ratio ? s.pe_ratio.toFixed(1) : '--';
+        var mv = s.total_mv ? (s.total_mv / 100000000).toFixed(1) : '--';
+        return '<tr>' +
+          '<td class="mono"><a href="/stock/' + (s.symbol || '') + '" style="color:var(--brand);text-decoration:none;font-weight:600" onmouseover="this.style.textDecoration=\'underline\'" onmouseout="this.style.textDecoration=\'none\'">' + (s.symbol || '--') + '</a></td>' +
+          '<td><a href="/stock/' + (s.symbol || '') + '" style="color:inherit;text-decoration:none">' + (s.name || '--') + '</a></td>' +
+          '<td class="mono">' + (s.price ? s.price.toFixed(2) : '--') + '</td>' +
+          '<td class="mono ' + cls + '">' + pctStr + '</td>' +
+          '<td class="mono">' + amount + '</td>' +
+          '<td class="mono">' + turnover + '</td>' +
+          '<td class="mono">' + pe + '</td>' +
+          '<td class="mono">' + mv + '</td>' +
+          '</tr>';
+      }).join('');
+    }
+  } catch (e) {
+    document.getElementById('loadingState').style.display = 'none';
+    document.getElementById('emptyState').style.display = 'block';
+    document.getElementById('emptyState').innerHTML = '<div class="icon">⚠️</div><p>扫描失败：' + e.message + '</p>';
+  }
+
+  document.getElementById('scanBtn').disabled = false;
+}
+</script>
+</body>
+</html>

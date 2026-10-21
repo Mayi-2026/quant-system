@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>回测报告 · 筛选月线、周线多头排列，日线多头排列的股</title>
+<style>
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;color:#1A1D24;background:#F4F5F7;margin:0;padding:32px;line-height:1.6}
+  .wrap{max-width:980px;margin:0 auto}
+  h1{font-size:22px;margin:0 0 4px}
+  .sub{color:#8A8F99;font-size:13px;margin-bottom:24px}
+  .card{background:#fff;border:1px solid #E7E9EE;border-radius:14px;padding:20px;margin-bottom:16px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .m{background:#F7F9FC;border-radius:10px;padding:12px;text-align:center}
+  .m .label{font-size:12px;color:#8A8F99}
+  .m .val{font-size:18px;font-weight:700;margin-top:4px;font-variant-numeric:tabular-nums}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;font-size:12px;color:#8A8F99;padding:8px;border-bottom:1px solid #E7E9EE}
+  td{padding:8px;border-bottom:1px solid #F0F2F5}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .mono{font-family:"SF Mono",ui-monospace,Menlo,monospace}
+  .empty{text-align:center;color:#8A8F99;padding:24px}
+  .h{font-size:15px;font-weight:600;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>回测报告 · 筛选月线、周线多头排列，日线多头排列的股</h1>
+  <div class="sub">标的 - · - ~ -</div>
+
+  <div class="card">
+    <div class="grid">
+      <div class="m"><div class="label">累计收益</div><div class="val">-</div></div>
+      <div class="m"><div class="label">年化收益</div><div class="val">-</div></div>
+      <div class="m"><div class="label">最大回撤</div><div class="val">-</div></div>
+      <div class="m"><div class="label">夏普比率</div><div class="val">-</div></div>
+      <div class="m"><div class="label">胜率</div><div class="val">-</div></div>
+      <div class="m"><div class="label">交易次数</div><div class="val">0</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="h">日线多头股票池（MA5&gt;MA10&gt;MA20&gt;MA60）</div>
+    <table>
+      <thead><tr>
+        <th>#</th><th>代码</th><th>名称</th><th>行业</th>
+        <th class="num">现价</th><th class="num">涨跌幅</th><th class="num">技术评分</th>
+        <th class="num">MA5</th><th class="num">MA10</th><th class="num">MA20</th><th class="num">MA60</th>
+      </tr></thead>
+      <tbody><tr><td>1</td><td>003029.SZ</td><td>吉大正元</td><td>软件服务</td><td class='num'>18.99</td><td class='num'>+4.11%</td><td class='num'>80</td><td class='num mono'>17.93</td><td class='num mono'>17.85</td><td class='num mono'>17.84</td><td class='num mono'>17.00</td></tr><tr><td>2</td><td>000697.SZ</td><td>炼石航空</td><td>未知</td><td class='num'>9.46</td><td class='num'>+5.46%</td><td class='num'>70</td><td class='num mono'>9.25</td><td class='num mono'>9.15</td><td class='num mono'>9.11</td><td class='num mono'>8.68</td></tr><tr><td>3</td><td>000719.SZ</td><td>中原传媒</td><td>文化传媒</td><td class='num'>12.98</td><td class='num'>+0.70%</td><td class='num'>70</td><td class='num mono'>12.50</td><td class='num mono'>12.29</td><td class='num mono'>12.23</td><td class='num mono'>12.21</td></tr><tr><td>4</td><td>002228.SZ</td><td>合兴包装</td><td>包装材料</td><td class='num'>3.28</td><td class='num'>+2.18%</td><td class='num'>70</td><td class='num mono'>3.24</td><td class='num mono'>3.23</td><td class='num mono'>3.21</td><td class='num mono'>3.14</td></tr><tr><td>5</td><td>002291.SZ</td><td>遥望科技</td><td>互联网服务</td><td class='num'>5.97</td><td class='num'>+3.11%</td><td class='num'>70</td><td class='num mono'>5.67</td><td class='num mono'>5.60</td><td class='num mono'>5.59</td><td class='num mono'>5.38</td></tr><tr><td>6</td><td>002292.SZ</td><td>奥飞娱乐</td><td>文化传媒</td><td class='num'>9.16</td><td class='num'>+2.58%</td><td class='num'>70</td><td class='num mono'>8.80</td><td class='num mono'>8.77</td><td class='num mono'>8.70</td><td class='num mono'>8.28</td></tr><tr><td>7</td><td>002468.SZ</td><td>申通快递</td><td>交运物流</td><td class='num'>14.98</td><td class='num'>+2.60%</td><td class='num'>70</td><td class='num mono'>14.82</td><td class='num mono'>14.79</td><td class='num mono'>14.71</td><td class='num mono'>14.39</td></tr><tr><td>8</td><td>002646.SZ</td><td>天佑德酒</td><td>酿酒行业</td><td class='num'>7.17</td><td class='num'>+1.56%</td><td class='num'>70</td><td class='num mono'>7.15</td><td class='num mono'>7.14</td><td class='num mono'>7.05</td><td class='num mono'>6.92</td></tr><tr><td>9</td><td>002671.SZ</td><td>龙泉股份</td><td>水泥建材</td><td class='num'>4.10</td><td class='num'>+2.24%</td><td class='num'>70</td><td class='num mono'>4.05</td><td class='num mono'>4.04</td><td class='num mono'>4.03</td><td class='num mono'>3.90</td></tr><tr><td>10</td><td>002712.SZ</td><td>思美传媒</td><td>文化传媒</td><td class='num'>5.47</td><td class='num'>+2.43%</td><td class='num'>70</td><td class='num mono'>5.17</td><td class='num mono'>5.10</td><td class='num mono'>5.09</td><td class='num mono'>4.80</td></tr></tbody>
+    </table>
+  </div>
+</div>
+</body>
+</html>

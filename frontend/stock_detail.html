@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>股票详情 · 蚂蚁量化系统</title>
+<style>
+  :root{--up:#E03131;--down:#2F9E44;--brand:#0969DA;--ink:#1A1D24;--ink2:#5B6270;--ink3:#8A8F99;--line:#E7E9EE;--bg:#F4F5F7;--card:#FFFFFF;--shadow:0 1px 2px rgba(16,24,40,.04),0 1px 3px rgba(16,24,40,.06);--radius:14px;--mono:"SF Mono",ui-monospace,Menlo,monospace}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:var(--bg);font-size:14px;line-height:1.5}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .app{display:grid;grid-template-columns:228px 1fr;min-height:100vh}
+  .sidebar{background:#0E2A52;color:#D6E4F5;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+  .brand{display:flex;align-items:center;gap:10px;padding:20px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .brand .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#1C7ED6,#4DABF7);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
+  .brand .name{font-size:16px;font-weight:700;color:#fff}
+  .brand .sub{font-size:11px;color:#8FA9C9;margin-top:1px}
+  .nav{padding:12px 10px;flex:1;overflow-y:auto}
+  .nav a{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:#C7D8EC;text-decoration:none;font-size:14px;margin-bottom:2px}
+  .nav a:hover{background:rgba(255,255,255,.07);color:#fff}
+  .nav a.active{background:#1C7ED6;color:#fff;font-weight:600}
+  .sidebar .foot{padding:14px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;color:#7E97B8}
+  .main{display:flex;flex-direction:column;min-width:0}
+  .topbar{height:60px;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;padding:0 24px;position:sticky;top:0;z-index:10}
+  .topbar .crumb{font-size:15px;font-weight:650}
+  .topbar .back{color:var(--ink2);text-decoration:none;font-size:13px;padding:6px 12px;border-radius:8px;border:1px solid var(--line)}
+  .topbar .back:hover{background:var(--bg)}
+  .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#4DABF7,#37B24D);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;margin-left:auto}
+  .content{padding:22px 24px 40px;max-width:1380px;width:100%;margin:0 auto}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px}
+  .panel .hd{display:flex;align-items:center;justify-content:space-between;padding:13px 16px 10px;border-bottom:1px solid var(--line)}
+  .panel .hd .t{font-size:14px;font-weight:650}
+  .panel .bd{padding:12px 16px 14px}
+  .btn{border:1px solid var(--line);background:var(--card);border-radius:9px;padding:7px 14px;font-size:13px;color:var(--ink2);cursor:pointer}
+  .btn:hover{background:var(--bg)}
+  .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600}
+  .tabs{display:flex;gap:6px}
+  .tab{padding:5px 12px;border-radius:7px;font-size:12px;cursor:pointer;background:var(--bg);border:1px solid var(--line);color:var(--ink2)}
+  .tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .tab:hover:not(.active){background:#EEF1F5}
+  .quote-header{display:flex;align-items:baseline;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+  .quote-header .name{font-size:22px;font-weight:700}
+  .quote-header .code{font-size:14px;color:var(--ink3)}
+  .quote-header .price{font-size:28px;font-weight:800;font-variant-numeric:tabular-nums}
+  .quote-header .chg{font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
+  .up{color:var(--up)} .down{color:var(--down)} .flat{color:var(--ink3)}
+  .quote-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+  .quote-item{padding:12px;background:var(--bg);border-radius:10px}
+  .quote-item .label{font-size:12px;color:var(--ink3);margin-bottom:4px}
+  .quote-item .val{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+  .chart-container{position:relative}
+  .chart-container svg{width:100%;display:block}
+  .legend{display:flex;gap:16px;padding:8px 0;font-size:12px;flex-wrap:wrap}
+  .legend span{display:flex;align-items:center;gap:4px}
+  .legend .dot{width:10px;height:3px;border-radius:2px}
+  .signal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  .signal-card{border:1px solid var(--line);border-radius:10px;padding:14px}
+  .signal-card .sig-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .signal-card .sig-name{font-weight:650;font-size:14px}
+  .signal-card .sig-badge{font-size:12px;padding:2px 10px;border-radius:6px;font-weight:600}
+  .signal-card .sig-desc{font-size:13px;color:var(--ink2);line-height:1.6}
+  .signal-card .sig-values{display:flex;gap:12px;margin-top:8px;font-size:12px;color:var(--ink3)}
+  .signal-card .sig-values span{font-weight:600;color:var(--ink)}
+  .overall-signal{border:2px solid var(--line);border-radius:12px;padding:16px;text-align:center;margin-top:12px}
+  .overall-signal .label{font-size:13px;color:var(--ink3);margin-bottom:4px}
+  .overall-signal .value{font-size:20px;font-weight:800}
+  .overall-signal .desc{font-size:13px;color:var(--ink2);margin-top:4px}
+  .loading{text-align:center;padding:40px;color:var(--ink3)}
+  .indicator-toggles{display:flex;gap:8px;flex-wrap:wrap}
+  .toggle-btn{padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--ink2);transition:all .15s}
+  .toggle-btn.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .toggle-btn:hover:not(.active){background:var(--bg)}
+  @media(max-width:960px){.app{grid-template-columns:1fr}.sidebar{display:none}.quote-grid{grid-template-columns:repeat(2,1fr)}.signal-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">Q</div><div><div class="name">蚂蚁量化系统</div><div class="sub">个人量化交易平台</div></div></div>
+    <nav class="nav">
+      <a href="/"><span>📊</span>总览首页</a>
+      <a href="/positions"><span>💼</span>持仓管理</a>
+      <a href="/market"><span>🌍</span>市场洞察</a>
+      <a href="/strategies"><span>📈</span>策略管理</a>
+      <a href="/scan"><span>🔍</span>策略选股</a>
+      <a href="/data"><span>💾</span>数据中心</a>
+      <a href="/trades"><span>📋</span>交易记录</a>
+      <a href="/paper"><span>🎮</span>模拟交易</a>
+      <a href="/watchlist"><span>⭐</span>自选股票</a>
+      <a href="/sequoia"><span>🎯</span>Sequoia选股</a>
+    </nav>
+    <div class="foot"><div>数据源：AKShare</div></div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <a class="back" href="javascript:history.back()">← 返回</a>
+      <span class="crumb" id="pageTitle">股票详情</span>
+      <button class="btn primary" id="addWatchBtn" onclick="toggleWatch()">☆ 加入自选</button>
+      <div class="avatar">乔</div>
+    </div>
+
+    <div class="content">
+      <!-- 行情头部 -->
+      <div class="panel">
+        <div class="bd">
+          <div class="quote-header" id="quoteHeader">
+            <div class="loading">加载行情数据...</div>
+          </div>
+          <div class="quote-grid" id="quoteGrid"></div>
+        </div>
+      </div>
+
+      <!-- K线主图 -->
+      <div class="panel">
+        <div class="hd">
+          <span class="t">K线走势</span>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="indicator-toggles" id="mainIndicators">
+              <span class="toggle-btn active" data-ind="ma" onclick="toggleMainInd('ma',this)">MA均线</span>
+              <span class="toggle-btn" data-ind="boll" onclick="toggleMainInd('boll',this)">BOLL</span>
+            </div>
+            <div class="tabs" id="periodTabs">
+              <div class="tab active" onclick="switchPeriod('daily',this)">日K</div>
+              <div class="tab" onclick="switchPeriod('weekly',this)">周K</div>
+              <div class="tab" onclick="switchPeriod('monthly',this)">月K</div>
+            </div>
+          </div>
+        </div>
+        <div class="bd">
+          <div class="legend" id="mainLegend"></div>
+          <div class="chart-container"><svg id="mainSvg" viewBox="0 0 1000 350" preserveAspectRatio="xMidYMid meet"></svg></div>
+        </div>
+      </div>
+
+      <!-- 副图指标 -->
+      <div class="panel">
+        <div class="hd">
+          <span class="t">技术指标</span>
+          <div class="tabs" id="subTabs">
+            <div class="tab active" onclick="switchSubChart('macd',this)">MACD</div>
+            <div class="tab" onclick="switchSubChart('kdj',this)">KDJ</div>
+            <div class="tab" onclick="switchSubChart('rsi',this)">RSI</div>
+          </div>
+        </div>
+        <div class="bd">
+          <div class="legend" id="subLegend"></div>
+          <div class="chart-container"><svg id="subSvg" viewBox="0 0 1000 200" preserveAspectRatio="xMidYMid meet"></svg></div>
+        </div>
+      </div>
+
+      <!-- 技术分析信号 -->
+      <div class="panel">
+        <div class="hd"><span class="t">技术分析信号</span><button class="btn" onclick="loadAll()">刷新</button></div>
+        <div class="bd" id="signalPanel">
+          <div class="loading">加载信号分析...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/api.js"></script>
+<script>
+// 从 URL 提取股票代码
+var pathParts = window.location.pathname.split('/');
+var symbol = pathParts[pathParts.length - 1] || '600519';
+var currentPeriod = 'daily';
+var currentSubChart = 'macd';
+var showMA = true;
+var showBOLL = false;
+var techData = null;
+var watchItemId = null;   // 若已在自选中，记录其 id
+
+async function loadAll() {
+  loadQuote();
+  loadWatchState();
+  await loadTechnical();
+}
+
+// ========== 自选状态 ==========
+async function loadWatchState() {
+  try {
+    var list = await api.getWatchlist();
+    var hit = (list || []).find(function(w) { return w.symbol === symbol; });
+    watchItemId = hit ? hit.id : null;
+    updateWatchBtn();
+  } catch (e) {
+    // 自选状态获取失败不影响详情页其它内容
+    console.warn('loadWatchState failed', e);
+  }
+}
+
+function updateWatchBtn() {
+  var btn = document.getElementById('addWatchBtn');
+  if (!btn) return;
+  if (watchItemId) {
+    btn.textContent = '★ 已加自选';
+    btn.style.background = '#F59F00';
+    btn.style.borderColor = '#F59F00';
+    btn.title = '点击从自选移除';
+  } else {
+    btn.textContent = '☆ 加入自选';
+    btn.style.background = '';
+    btn.style.borderColor = '';
+    btn.title = '点击加入自选';
+  }
+}
+
+async function toggleWatch() {
+  var btn = document.getElementById('addWatchBtn');
+  btn.disabled = true;
+  try {
+    if (watchItemId) {
+      if (!confirm('确定从自选中移除？')) { btn.disabled = false; return; }
+      await api.removeFromWatchlist(watchItemId);
+      watchItemId = null;
+      updateWatchBtn();
+    } else {
+      var name = (document.getElementById('pageTitle').textContent || '').replace(' 详情', '');
+      var res = await api.addToWatchlist({ symbol: symbol, name: name });
+      if (res && res.error) { alert(res.error); btn.disabled = false; return; }
+      watchItemId = res.id;
+      updateWatchBtn();
+    }
+  } catch (e) {
+    alert('操作失败: ' + e.message);
+  }
+  btn.disabled = false;
+}
+
+async function loadQuote() {
+  try {
+    var quote = await api.getQuote(symbol);
+    if (!quote || quote.error) {
+      document.getElementById('quoteHeader').innerHTML = '<div style="color:var(--ink3)">未找到该股票，请检查代码是否正确</div>';
+      return;
+    }
+    var cls = signCls(quote.change_pct);
+    var pctStr = (quote.change_pct >= 0 ? '+' : '') + fmt(quote.change_pct) + '%';
+    document.getElementById('pageTitle').textContent = (quote.name || symbol) + ' 详情';
+
+    var headerHtml = '<span class="name">' + (quote.name || '') + '</span>';
+    headerHtml += '<span class="code">' + quote.symbol + '</span>';
+    headerHtml += '<span class="price ' + cls + '">' + fmt(quote.price) + '</span>';
+    headerHtml += '<span class="chg ' + cls + '">' + pctStr + '</span>';
+    document.getElementById('quoteHeader').innerHTML = headerHtml;
+
+    var gridHtml = '';
+    var items = [
+      {label: '今开', val: fmt(quote.open)},
+      {label: '昨收', val: fmt(quote.prev_close)},
+      {label: '最高', val: fmt(quote.high), cls: 'up'},
+      {label: '最低', val: fmt(quote.low), cls: 'down'},
+      {label: '成交量', val: fmt(quote.volume / 100, 0) + '手'},
+      {label: '成交额', val: fmt(quote.amount / 100000000, 2) + '亿'},
+      {label: '换手率', val: fmt(quote.turnover_rate || 0) + '%'},
+      {label: '市盈率', val: fmt(quote.pe_ratio || 0)},
+    ];
+    items.forEach(function(item) {
+      gridHtml += '<div class="quote-item"><div class="label">' + item.label + '</div><div class="val ' + (item.cls || '') + '">' + item.val + '</div></div>';
+    });
+    document.getElementById('quoteGrid').innerHTML = gridHtml;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+async function loadTechnical() {
+  try {
+    var data = await api.getTechnical(symbol, currentPeriod);
+    if (!data || data.error) {
+      document.getElementById('signalPanel').innerHTML = '<div class="loading">' + (data && data.error || '加载失败') + '</div>';
+      return;
+    }
+    techData = data;
+    renderMainChart();
+    renderSubChart();
+    renderSignals();
+  } catch (e) {
+    console.error(e);
+    document.getElementById('signalPanel').innerHTML = '<div class="loading">加载失败: ' + e.message + '</div>';
+  }
+}
+
+// ========== 主图 K线 + MA/BOLL ==========
+function renderMainChart() {
+  if (!techData) return;
+  var dates = techData.dates;
+  var closes = techData.closes;
+  var n = dates.length;
+  if (n < 2) return;
+
+  // 显示最近 120 个交易日
+  var show = Math.min(n, 120);
+  var start = n - show;
+  var d = dates.slice(start);
+  var c = closes.slice(start);
+
+  var W = 1000, H = 350, padL = 60, padR = 20, padT = 15, padB = 30;
+  var barW = (W - padL - padR) / show * 0.7;
+  var gap = (W - padL - padR) / show * 0.3;
+
+  // 获取 K 线数据（从 api 缓存的 kline 重新取）
+  api.getKline(symbol, currentPeriod).then(function(klines) {
+    if (!klines || !klines.length) return;
+    var kk = klines.slice(start);
+
+    var allHi = Math.max.apply(null, kk.map(function(k){return k.high}));
+    var allLo = Math.min.apply(null, kk.map(function(k){return k.low}));
+
+    // 扩展价格范围包含均线/BOLL
+    if (showMA) {
+      ['ma5','ma10','ma20','ma60'].forEach(function(key) {
+        var arr = (techData[key] || []).slice(start);
+        arr.forEach(function(v) { if (v !== null) { allHi = Math.max(allHi, v); allLo = Math.min(allLo, v); }});
+      });
+    }
+    if (showBOLL && techData.boll) {
+      var upper = (techData.boll.upper || []).slice(start);
+      var lower = (techData.boll.lower || []).slice(start);
+      upper.forEach(function(v) { if (v !== null) allHi = Math.max(allHi, v); });
+      lower.forEach(function(v) { if (v !== null) allLo = Math.min(allLo, v); });
+    }
+
+    var pad = (allHi - allLo) * 0.05;
+    allHi += pad; allLo -= pad;
+
+    var X = function(i) { return padL + i * ((W - padL - padR) / show) + gap / 2; };
+    var Y = function(v) { return padT + (1 - (v - allLo) / (allHi - allLo || 1)) * (H - padT - padB); };
+
+    var svg = '';
+    // 网格
+    for (var g = 0; g <= 4; g++) {
+      var vy = padT + g / 4 * (H - padT - padB);
+      var lv = allHi - g / 4 * (allHi - allLo);
+      svg += '<line x1="' + padL + '" y1="' + vy + '" x2="' + (W - padR) + '" y2="' + vy + '" stroke="#EEF1F5"/>';
+      svg += '<text x="' + (padL - 8) + '" y="' + (vy + 4) + '" font-size="11" fill="#8A8F99" text-anchor="end">' + fmt(lv) + '</text>';
+    }
+
+    // K线
+    kk.forEach(function(k, i) {
+      var cx = X(i) + barW / 2;
+      var isUp = k.close >= k.open;
+      var color = isUp ? '#E03131' : '#2F9E44';
+      var bodyTop = Y(Math.max(k.open, k.close));
+      var bodyBot = Y(Math.min(k.open, k.close));
+      var bodyH = Math.max(bodyBot - bodyTop, 1);
+      svg += '<line x1="' + cx + '" y1="' + Y(k.high) + '" x2="' + cx + '" y2="' + Y(k.low) + '" stroke="' + color + '" stroke-width="1"/>';
+      svg += '<rect x="' + X(i) + '" y="' + bodyTop + '" width="' + barW + '" height="' + bodyH + '" fill="' + color + '"/>';
+    });
+
+    // MA 均线
+    if (showMA) {
+      var maColors = {ma5: '#F59F00', ma10: '#0969DA', ma20: '#AE3EC9', ma60: '#2F9E44'};
+      Object.keys(maColors).forEach(function(key) {
+        var arr = (techData[key] || []).slice(start);
+        svg += buildLine(arr, X, Y, barW / 2, maColors[key], 1.5);
+      });
+    }
+
+    // BOLL 带
+    if (showBOLL && techData.boll) {
+      var bMid = (techData.boll.mid || []).slice(start);
+      var bUpper = (techData.boll.upper || []).slice(start);
+      var bLower = (techData.boll.lower || []).slice(start);
+      svg += buildLine(bMid, X, Y, barW / 2, '#0969DA', 1.5);
+      svg += buildLine(bUpper, X, Y, barW / 2, '#E03131', 1, '4,3');
+      svg += buildLine(bLower, X, Y, barW / 2, '#2F9E44', 1, '4,3');
+      // 填充上下轨之间区域
+      var areaPath = buildArea(bUpper, bLower, X, Y, barW / 2);
+      if (areaPath) svg += areaPath;
+    }
+
+    // 日期标签
+    var step = Math.max(Math.floor(show / 6), 1);
+    for (var i = 0; i < show; i += step) {
+      var label = (d[i] || '').slice(5);
+      svg += '<text x="' + (X(i) + barW / 2) + '" y="' + (H - 5) + '" font-size="10" fill="#8A8F99" text-anchor="middle">' + label + '</text>';
+    }
+
+    document.getElementById('mainSvg').setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    document.getElementById('mainSvg').innerHTML = svg;
+
+    // 图例
+    var legendHtml = '';
+    if (showMA) {
+      legendHtml += '<span><span class="dot" style="background:#F59F00"></span>MA5</span>';
+      legendHtml += '<span><span class="dot" style="background:#0969DA"></span>MA10</span>';
+      legendHtml += '<span><span class="dot" style="background:#AE3EC9"></span>MA20</span>';
+      if (techData.ma60 && techData.ma60[start] !== null) legendHtml += '<span><span class="dot" style="background:#2F9E44"></span>MA60</span>';
+    }
+    if (showBOLL) {
+      legendHtml += '<span><span class="dot" style="background:#0969DA"></span>BOLL中</span>';
+      legendHtml += '<span><span class="dot" style="background:#E03131"></span>BOLL上</span>';
+      legendHtml += '<span><span class="dot" style="background:#2F9E44"></span>BOLL下</span>';
+    }
+    document.getElementById('mainLegend').innerHTML = legendHtml;
+  });
+}
+
+function buildLine(arr, X, Y, offsetX, color, width, dash) {
+  var pts = [];
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i] !== null && arr[i] !== undefined) {
+      pts.push((pts.length ? 'L' : 'M') + (X(i) + offsetX).toFixed(1) + ',' + Y(arr[i]).toFixed(1));
+    }
+  }
+  if (!pts.length) return '';
+  var d = 'M' + pts.join(' ').replace(/M/g, '|').replace('|', 'M').replace(/\|/g, ' L');
+  // simpler approach
+  var path = '';
+  var started = false;
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i] !== null && arr[i] !== undefined) {
+      path += (started ? ' L' : 'M') + (X(i) + offsetX).toFixed(1) + ',' + Y(arr[i]).toFixed(1);
+      started = true;
+    }
+  }
+  var attr = 'stroke="' + color + '" stroke-width="' + width + '" fill="none"';
+  if (dash) attr += ' stroke-dasharray="' + dash + '"';
+  return '<path d="' + path + '" ' + attr + '/>';
+}
+
+function buildArea(upper, lower, X, Y, offsetX) {
+  var topPts = [], botPts = [];
+  for (var i = 0; i < upper.length; i++) {
+    if (upper[i] !== null && lower[i] !== null) {
+      topPts.push((X(i) + offsetX).toFixed(1) + ',' + Y(upper[i]).toFixed(1));
+      botPts.unshift((X(i) + offsetX).toFixed(1) + ',' + Y(lower[i]).toFixed(1));
+    }
+  }
+  if (topPts.length < 2) return '';
+  return '<polygon points="' + topPts.join(' ') + ' ' + botPts.join(' ') + '" fill="' + '#0969DA' + '" opacity="0.06"/>';
+}
+
+// ========== 副图 MACD / KDJ / RSI ==========
+function renderSubChart() {
+  if (!techData) return;
+  var n = techData.dates.length;
+  var show = Math.min(n, 120);
+  var start = n - show;
+
+  var W = 1000, H = 200, padL = 60, padR = 20, padT = 15, padB = 30;
+  var svg = '';
+
+  if (currentSubChart === 'macd') {
+    svg = renderMACD(techData.macd, start, show, W, H, padL, padR, padT, padB);
+  } else if (currentSubChart === 'kdj') {
+    svg = renderKDJ(techData.kdj, start, show, W, H, padL, padR, padT, padB);
+  } else if (currentSubChart === 'rsi') {
+    svg = renderRSI(techData.rsi, start, show, W, H, padL, padR, padT, padB);
+  }
+
+  document.getElementById('subSvg').setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  document.getElementById('subSvg').innerHTML = svg;
+
+  // 图例
+  var legendHtml = '';
+  if (currentSubChart === 'macd') {
+    legendHtml = '<span><span class="dot" style="background:#0969DA"></span>DIF</span><span><span class="dot" style="background:#F59F00"></span>DEA</span><span><span class="dot" style="background:#E03131;width:8px;height:8px;border-radius:0"></span>MACD柱</span>';
+  } else if (currentSubChart === 'kdj') {
+    legendHtml = '<span><span class="dot" style="background:#0969DA"></span>K</span><span><span class="dot" style="background:#F59F00"></span>D</span><span><span class="dot" style="background:#AE3EC9"></span>J</span>';
+  } else if (currentSubChart === 'rsi') {
+    legendHtml = '<span><span class="dot" style="background:#F59F00"></span>RSI6</span><span><span class="dot" style="background:#0969DA"></span>RSI12</span><span><span class="dot" style="background:#AE3EC9"></span>RSI24</span>';
+  }
+  document.getElementById('subLegend').innerHTML = legendHtml;
+}
+
+function renderMACD(macd, start, show, W, H, padL, padR, padT, padB) {
+  var dif = macd.dif.slice(start);
+  var dea = macd.dea.slice(start);
+  var bar = macd.macd_bar.slice(start);
+  var dates = techData.dates.slice(start);
+
+  var allVals = dif.concat(dea).concat(bar).filter(function(v){return v !== null});
+  var maxAbs = Math.max.apply(null, allVals.map(Math.abs)) || 1;
+
+  var barW = (W - padL - padR) / show * 0.6;
+  var X = function(i) { return padL + i * ((W - padL - padR) / show) + ((W - padL - padR) / show - barW) / 2; };
+  var Y = function(v) { return padT + (1 - (v + maxAbs) / (2 * maxAbs)) * (H - padT - padB); };
+  var zeroY = Y(0);
+
+  var svg = '';
+  // 零轴
+  svg += '<line x1="' + padL + '" y1="' + zeroY + '" x2="' + (W - padR) + '" y2="' + zeroY + '" stroke="#DEE2E6" stroke-dasharray="3,3"/>';
+  // 网格
+  svg += '<line x1="' + padL + '" y1="' + padT + '" x2="' + (W - padR) + '" y2="' + padT + '" stroke="#EEF1F5"/>';
+  svg += '<line x1="' + padL + '" y1="' + (H - padB) + '" x2="' + (W - padR) + '" y2="' + (H - padB) + '" stroke="#EEF1F5"/>';
+  svg += '<text x="' + (padL - 8) + '" y="' + (padT + 4) + '" font-size="10" fill="#8A8F99" text-anchor="end">' + maxAbs.toFixed(2) + '</text>';
+  svg += '<text x="' + (padL - 8) + '" y="' + (zeroY + 4) + '" font-size="10" fill="#8A8F99" text-anchor="end">0</text>';
+
+  // MACD 柱
+  bar.forEach(function(v, i) {
+    if (v === null) return;
+    var x = X(i);
+    var color = v >= 0 ? '#E03131' : '#2F9E44';
+    var top = v >= 0 ? Y(v) : zeroY;
+    var h = Math.abs(Y(v) - zeroY);
+    svg += '<rect x="' + x + '" y="' + top + '" width="' + barW + '" height="' + Math.max(h, 0.5) + '" fill="' + color + '" opacity="0.7"/>';
+  });
+
+  // DIF 线
+  svg += buildLineOffset(dif, X, Y, barW / 2, '#0969DA', 1.5);
+  // DEA 线
+  svg += buildLineOffset(dea, X, Y, barW / 2, '#F59F00', 1.5);
+
+  // 日期
+  var step = Math.max(Math.floor(show / 6), 1);
+  for (var i = 0; i < show; i += step) {
+    var label = (dates[i] || '').slice(5);
+    svg += '<text x="' + (X(i) + barW / 2) + '" y="' + (H - 5) + '" font-size="10" fill="#8A8F99" text-anchor="middle">' + label + '</text>';
+  }
+  return svg;
+}
+
+function buildLineOffset(arr, X, Y, offsetX, color, width) {
+  var path = '';
+  var started = false;
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i] !== null && arr[i] !== undefined) {
+      path += (started ? ' L' : 'M') + (X(i) + offsetX).toFixed(1) + ',' + Y(arr[i]).toFixed(1);
+      started = true;
+    }
+  }
+  return '<path d="' + path + '" stroke="' + color + '" stroke-width="' + width + '" fill="none"/>';
+}
+
+function renderKDJ(kdj, start, show, W, H, padL, padR, padT, padB) {
+  var k = kdj.k.slice(start);
+  var d = kdj.d.slice(start);
+  var j = kdj.j.slice(start);
+  var dates = techData.dates.slice(start);
+
+  var allVals = k.concat(d).concat(j).filter(function(v){return v !== null});
+  var hi = Math.max.apply(null, allVals) || 100;
+  var lo = Math.min.apply(null, allVals) || 0;
+  var pad = (hi - lo) * 0.1;
+  hi += pad; lo -= pad;
+
+  var barW = (W - padL - padR) / show * 0.6;
+  var X = function(i) { return padL + i * ((W - padL - padR) / show) + ((W - padL - padR) / show - barW) / 2; };
+  var Y = function(v) { return padT + (1 - (v - lo) / (hi - lo || 1)) * (H - padT - padB); };
+
+  var svg = '';
+  // 超买超卖线
+  [80, 20].forEach(function(level) {
+    if (level >= lo && level <= hi) {
+      var y = Y(level);
+      svg += '<line x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y + '" stroke="#DEE2E6" stroke-dasharray="3,3"/>';
+      svg += '<text x="' + (padL - 8) + '" y="' + (y + 4) + '" font-size="10" fill="#8A8F99" text-anchor="end">' + level + '</text>';
+    }
+  });
+
+  svg += buildLineOffset(k, X, Y, barW / 2, '#0969DA', 1.5);
+  svg += buildLineOffset(d, X, Y, barW / 2, '#F59F00', 1.5);
+  svg += buildLineOffset(j, X, Y, barW / 2, '#AE3EC9', 1.5);
+
+  var step = Math.max(Math.floor(show / 6), 1);
+  for (var i = 0; i < show; i += step) {
+    var label = (dates[i] || '').slice(5);
+    svg += '<text x="' + (X(i) + barW / 2) + '" y="' + (H - 5) + '" font-size="10" fill="#8A8F99" text-anchor="middle">' + label + '</text>';
+  }
+  return svg;
+}
+
+function renderRSI(rsi, start, show, W, H, padL, padR, padT, padB) {
+  var r6 = rsi.rsi6.slice(start);
+  var r12 = rsi.rsi12.slice(start);
+  var r24 = rsi.rsi24.slice(start);
+  var dates = techData.dates.slice(start);
+
+  var X = function(i) { return padL + i * ((W - padL - padR) / show); };
+  var Y = function(v) { return padT + (1 - v / 100) * (H - padT - padB); };
+
+  var svg = '';
+  // 超买超卖区域
+  [80, 50, 20].forEach(function(level) {
+    var y = Y(level);
+    svg += '<line x1="' + padL + '" y1="' + y + '" x2="' + (W - padR) + '" y2="' + y + '" stroke="#DEE2E6" stroke-dasharray="' + (level === 50 ? '2,2' : '3,3') + '"/>';
+    svg += '<text x="' + (padL - 8) + '" y="' + (y + 4) + '" font-size="10" fill="#8A8F99" text-anchor="end">' + level + '</text>';
+  });
+
+  // 超买超卖填充
+  svg += '<rect x="' + padL + '" y="' + Y(100) + '" width="' + (W - padL - padR) + '" height="' + (Y(80) - Y(100)) + '" fill="#E03131" opacity="0.04"/>';
+  svg += '<rect x="' + padL + '" y="' + Y(20) + '" width="' + (W - padL - padR) + '" height="' + (Y(0) - Y(20)) + '" fill="#2F9E44" opacity="0.04"/>';
+
+  svg += buildLineOffset(r6, X, Y, 0, '#F59F00', 1.5);
+  svg += buildLineOffset(r12, X, Y, 0, '#0969DA', 1.5);
+  svg += buildLineOffset(r24, X, Y, 0, '#AE3EC9', 1.5);
+
+  var step = Math.max(Math.floor(show / 6), 1);
+  for (var i = 0; i < show; i += step) {
+    var label = (dates[i] || '').slice(5);
+    svg += '<text x="' + X(i) + '" y="' + (H - 5) + '" font-size="10" fill="#8A8F99" text-anchor="middle">' + label + '</text>';
+  }
+  return svg;
+}
+
+// ========== 信号面板 ==========
+function renderSignals() {
+  if (!techData || !techData.signals) {
+    document.getElementById('signalPanel').innerHTML = '<div class="loading">暂无信号数据</div>';
+    return;
+  }
+  var signals = techData.signals;
+  var html = '<div class="signal-grid">';
+
+  // 均线信号
+  var ma = signals.ma || {signal: '--', desc: '暂无数据'};
+  html += buildSignalCard('均线系统', ma.signal, ma.desc, getSignalColor(ma.signal), getLatestValues('ma'));
+
+  // MACD 信号
+  var macd = signals.macd || {signal: '--', desc: '暂无数据'};
+  html += buildSignalCard('MACD', macd.signal, macd.desc, getSignalColor(macd.signal), getLatestValues('macd'));
+
+  // KDJ 信号
+  var kdj = signals.kdj || {signal: '--', desc: '暂无数据'};
+  html += buildSignalCard('KDJ', kdj.signal, kdj.desc, getSignalColor(kdj.signal), getLatestValues('kdj'));
+
+  // RSI 信号
+  var rsi = signals.rsi || {signal: '--', desc: '暂无数据'};
+  html += buildSignalCard('RSI', rsi.signal, rsi.desc, getSignalColor(rsi.signal), getLatestValues('rsi'));
+
+  html += '</div>';
+
+  // 综合信号
+  var overall = signals.overall || {signal: '--', desc: '暂无数据'};
+  var overallColor = getSignalColor(overall.signal);
+  html += '<div class="overall-signal" style="border-color:' + overallColor + '">';
+  html += '<div class="label">综合研判</div>';
+  html += '<div class="value" style="color:' + overallColor + '">' + overall.signal + '</div>';
+  html += '<div class="desc">' + overall.desc + '</div>';
+  html += '</div>';
+
+  document.getElementById('signalPanel').innerHTML = html;
+}
+
+function buildSignalCard(name, signal, desc, color, values) {
+  var html = '<div class="signal-card">';
+  html += '<div class="sig-head"><span class="sig-name">' + name + '</span><span class="sig-badge" style="background:' + color + '20;color:' + color + '">' + signal + '</span></div>';
+  html += '<div class="sig-desc">' + desc + '</div>';
+  if (values) {
+    html += '<div class="sig-values">' + values + '</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function getSignalColor(signal) {
+  if (['金叉','多头排列','多头','超卖','偏多','看多'].some(function(s){return signal.indexOf(s) >= 0})) return '#E03131';
+  if (['死叉','超买','偏空','看空'].some(function(s){return signal.indexOf(s) >= 0})) return '#2F9E44';
+  return '#0969DA';
+}
+
+function getLatestValues(type) {
+  if (!techData) return '';
+  var n = techData.dates.length - 1;
+  if (type === 'ma') {
+    var parts = [];
+    [['MA5', techData.ma5], ['MA10', techData.ma10], ['MA20', techData.ma20]].forEach(function(p) {
+      if (p[1][n] !== null) parts.push(p[0] + ': <span>' + fmt(p[1][n]) + '</span>');
+    });
+    return parts.join(' ');
+  } else if (type === 'macd') {
+    var dif = techData.macd.dif[n], dea = techData.macd.dea[n];
+    return 'DIF: <span>' + (dif !== null ? fmt(dif, 4) : '--') + '</span> DEA: <span>' + (dea !== null ? fmt(dea, 4) : '--') + '</span>';
+  } else if (type === 'kdj') {
+    var k = techData.kdj.k[n], d = techData.kdj.d[n], j = techData.kdj.j[n];
+    return 'K: <span>' + (k !== null ? fmt(k) : '--') + '</span> D: <span>' + (d !== null ? fmt(d) : '--') + '</span> J: <span>' + (j !== null ? fmt(j) : '--') + '</span>';
+  } else if (type === 'rsi') {
+    var r6 = techData.rsi.rsi6[n];
+    return 'RSI6: <span>' + (r6 !== null ? fmt(r6) : '--') + '</span> RSI12: <span>' + (techData.rsi.rsi12[n] !== null ? fmt(techData.rsi.rsi12[n]) : '--') + '</span>';
+  }
+  return '';
+}
+
+// ========== 交互 ==========
+function toggleMainInd(ind, el) {
+  el.classList.toggle('active');
+  if (ind === 'ma') showMA = el.classList.contains('active');
+  if (ind === 'boll') showBOLL = el.classList.contains('active');
+  renderMainChart();
+}
+
+function switchPeriod(period, el) {
+  currentPeriod = period;
+  document.querySelectorAll('#periodTabs .tab').forEach(function(t){t.classList.remove('active')});
+  el.classList.add('active');
+  loadTechnical();
+}
+
+function switchSubChart(type, el) {
+  currentSubChart = type;
+  document.querySelectorAll('#subTabs .tab').forEach(function(t){t.classList.remove('active')});
+  el.classList.add('active');
+  renderSubChart();
+}
+
+// 启动
+loadAll();
+</script>
+</body>
+</html>

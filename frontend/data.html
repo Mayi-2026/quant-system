@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数据中心 · 蚂蚁量化系统</title>
+<style>
+  :root{--up:#E03131;--down:#2F9E44;--brand:#0969DA;--ink:#1A1D24;--ink2:#5B6270;--ink3:#8A8F99;--line:#E7E9EE;--bg:#F4F5F7;--card:#FFFFFF;--shadow:0 1px 2px rgba(16,24,40,.04),0 1px 3px rgba(16,24,40,.06);--radius:14px;--mono:"SF Mono",ui-monospace,Menlo,monospace}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--ink);background:var(--bg);font-size:14px;line-height:1.5}
+  .mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+  .app{display:grid;grid-template-columns:228px 1fr;min-height:100vh}
+  .sidebar{background:#0E2A52;color:#D6E4F5;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+  .brand{display:flex;align-items:center;gap:10px;padding:20px;border-bottom:1px solid rgba(255,255,255,.08)}
+  .brand .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#1C7ED6,#4DABF7);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800}
+  .brand .name{font-size:16px;font-weight:700;color:#fff}
+  .brand .sub{font-size:11px;color:#8FA9C9;margin-top:1px}
+  .nav{padding:12px 10px;flex:1;overflow-y:auto}
+  .nav a{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:9px;color:#C7D8EC;text-decoration:none;font-size:14px;margin-bottom:2px}
+  .nav a:hover{background:rgba(255,255,255,.07);color:#fff}
+  .nav a.active{background:#1C7ED6;color:#fff;font-weight:600}
+  .sidebar .foot{padding:14px;border-top:1px solid rgba(255,255,255,.08);font-size:12px;color:#7E97B8}
+  .main{display:flex;flex-direction:column;min-width:0}
+  .topbar{height:60px;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;padding:0 24px;position:sticky;top:0;z-index:10}
+  .topbar .crumb{font-size:15px;font-weight:650}
+  .btn{border:1px solid var(--line);background:var(--card);border-radius:9px;padding:7px 14px;font-size:13px;color:var(--ink2);cursor:pointer}
+  .btn.primary{background:var(--brand);border-color:var(--brand);color:#fff;font-weight:600}
+  .avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#4DABF7,#37B24D);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+  .content{padding:22px 24px 40px;max-width:1380px;width:100%;margin:0 auto}
+  .page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .page-head h1{font-size:20px;font-weight:700}
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:14px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px}
+  .panel .hd{display:flex;align-items:center;justify-content:space-between;padding:13px 16px 10px;border-bottom:1px solid var(--line)}
+  .panel .hd .t{font-size:14px;font-weight:650}
+  .panel .bd{padding:20px}
+  .info-row{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #F0F2F5}
+  .info-row:last-child{border-bottom:none}
+  .info-row .label{color:var(--ink3);font-size:13px}
+  .info-row .val{font-weight:600;font-size:14px}
+  .status{display:inline-block;padding:3px 10px;border-radius:6px;font-size:12px;font-weight:600}
+  .status.ok{background:#EBFBEE;color:var(--down)}
+  .status.warn{background:#FFF9DB;color:#F59F00}
+  .loading{text-align:center;padding:40px;color:var(--ink3)}
+  .log{background:var(--bg);border-radius:8px;padding:12px;font-family:var(--mono);font-size:12px;color:var(--ink2);max-height:300px;overflow-y:auto}
+  .log .item{padding:4px 0;border-bottom:1px solid #E7E9EE}
+  .log .item:last-child{border-bottom:none}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand"><div class="logo">Q</div><div><div class="name">蚂蚁量化系统</div><div class="sub">个人量化交易平台</div></div></div>
+    <nav class="nav">
+      <a href="/"><span>📊</span>总览首页</a>
+      <a href="/positions"><span>💼</span>持仓管理</a>
+      <a href="/market"><span>🌍</span>市场洞察</a>
+      <a href="/strategies"><span>📈</span>策略管理</a>
+      <a href="/scan"><span>🔍</span>策略选股</a>
+      <a class="active" href="/data"><span>💾</span>数据中心</a>
+      <a href="/trades"><span>📋</span>交易记录</a>
+      <a href="/paper"><span>🎮</span>模拟交易</a>
+      <a href="/watchlist"><span>⭐</span>自选股票</a>
+      <a href="/sequoia"><span>🎯</span>Sequoia选股</a>
+    </nav>
+    <div class="foot"><div>数据源：AKShare</div></div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <span class="crumb">数据中心</span>
+      <button class="btn primary" onclick="syncAll()">同步所有数据</button>
+      <div style="flex:1"></div>
+      <div class="avatar">乔</div>
+    </div>
+
+    <div class="content">
+      <div class="page-head"><h1>数据中心</h1></div>
+
+      <div class="grid">
+        <div class="panel">
+          <div class="hd"><span class="t">数据源状态</span></div>
+          <div class="bd">
+            <div class="info-row"><span class="label">数据源</span><span class="val">AKShare</span></div>
+            <div class="info-row"><span class="label">连接状态</span><span class="status ok">● 已连接</span></div>
+            <div class="info-row"><span class="label">最后更新时间</span><span class="val mono" id="lastUpdate">--</span></div>
+            <div class="info-row"><span class="label">支持市场</span><span class="val">A股 / 港股 / 美股</span></div>
+            <div class="info-row"><span class="label">数据类型</span><span class="val">实时行情 / K线 / 财务数据</span></div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="hd"><span class="t">数据同步操作</span></div>
+          <div class="bd">
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <button class="btn primary" onclick="syncQuotes()" style="width:100%;justify-content:center">同步持仓实时行情</button>
+              <button class="btn" onclick="syncKline()" style="width:100%;justify-content:center">同步持仓K线数据（近5年）</button>
+              <button class="btn" onclick="syncAll()" style="width:100%;justify-content:center">全量同步所有数据</button>
+              <button class="btn" style="width:100%;justify-content:center;background:linear-gradient(135deg,#0969DA,#4DABF7);color:#fff;border:none" onclick="updateLatest()" id="updateLatestBtn">📅 更新最新数据（各股分别补至当前日期）</button>
+              <button class="btn" style="width:100%;justify-content:center;background:linear-gradient(135deg,#E03131,#F76767);color:#fff;border:none" onclick="fullSync()" id="fullSyncBtn">🚀 全量更新（全部A股 → 本地数据库）</button>
+            </div>
+            <div id="fullSyncProgress" style="display:none;margin-top:16px">
+              <div style="font-size:13px;color:var(--ink2);margin-bottom:8px" id="fullSyncStatus">准备中...</div>
+              <div style="background:var(--bg);border-radius:8px;height:24px;overflow:hidden;position:relative">
+                <div id="fullSyncBar" style="height:100%;background:linear-gradient(90deg,#7048e8,#9775fa);width:0%;transition:width 0.3s;border-radius:8px"></div>
+                <div id="fullSyncPct" style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--ink)">0%</div>
+              </div>
+              <div style="font-size:12px;color:var(--ink3);margin-top:6px" id="fullSyncDetail"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 本地数据统计 -->
+      <div class="panel">
+        <div class="hd"><span class="t">本地数据统计</span><button class="btn" onclick="loadStats()">刷新</button></div>
+        <div class="bd" id="statsPanel">
+          <div class="loading">点击刷新加载统计数据...</div>
+        </div>
+      </div>
+
+      <!-- 各表记录汇总 -->
+      <div class="panel">
+        <div class="hd"><span class="t">各表记录汇总</span></div>
+        <div class="bd" id="tablesPanel">
+          <div class="loading">加载中...</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="hd"><span class="t">同步日志</span><button class="btn" onclick="clearLog()">清空</button></div>
+        <div class="bd"><div class="log" id="log"><div class="item" style="color:#8A8F99">等待操作...</div></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/static/js/api.js"></script>
+<script>
+var logItems=[];
+
+function addLog(msg,type){
+  var time=new Date().toLocaleTimeString('zh-CN');
+  logItems.unshift({time:time,msg:msg,type:type||'info'});
+  if(logItems.length>50)logItems.pop();
+  renderLog();
+}
+
+function renderLog(){
+  var el=document.getElementById('log');
+  if(!logItems.length){el.innerHTML='<div class="item" style="color:#8A8F99">等待操作...</div>';return}
+  el.innerHTML=logItems.map(function(l){
+    var color=l.type==='success'?'#2F9E44':(l.type==='error'?'#E03131':'#5B6270');
+    return '<div class="item" style="color:'+color+'">['+l.time+'] '+l.msg+'</div>';
+  }).join('');
+}
+
+function clearLog(){logItems=[];renderLog()}
+
+async function syncQuotes(){
+  addLog('开始同步持仓实时行情...');
+  try{
+    var res=await api.syncQuotes();
+    addLog('同步完成：'+res.message,'success');
+    document.getElementById('lastUpdate').textContent=new Date().toLocaleString('zh-CN');
+  }catch(e){
+    addLog('同步失败：'+e.message,'error');
+  }
+}
+
+async function syncKline(){
+  addLog('开始同步K线数据...');
+  try{
+    var positions=await api.getPositions();
+    if(!positions||!positions.length){addLog('暂无持仓，无需同步','info');return}
+    for(var i=0;i<positions.length;i++){
+      var p=positions[i];
+      addLog('同步 '+p.name+' ('+p.symbol+') K线数据...');
+      await api.syncKline(p.symbol,1825);
+      addLog(p.name+' K线同步完成','success');
+    }
+    document.getElementById('lastUpdate').textContent=new Date().toLocaleString('zh-CN');
+  }catch(e){
+    addLog('同步失败：'+e.message,'error');
+  }
+}
+
+async function syncAll(){
+  addLog('开始全量同步...');
+  await syncQuotes();
+  await syncKline();
+  addLog('全量同步完成','success');
+}
+
+document.getElementById('lastUpdate').textContent=new Date().toLocaleString('zh-CN');
+
+// Load data stats
+async function loadStats() {
+  var statsEl = document.getElementById('statsPanel');
+  var tablesEl = document.getElementById('tablesPanel');
+  statsEl.innerHTML = '<div class="loading">加载中...</div>';
+  tablesEl.innerHTML = '<div class="loading">加载中...</div>';
+  try {
+    var data = await api.getDataStats();
+    // Render stats
+    var html = '';
+    var stats = data.stats || [];
+    for (var i = 0; i < stats.length; i++) {
+      var s = stats[i];
+      if (s.table === 'database_file') {
+        html += '<div class="info-row"><span class="label">数据库文件</span><span class="val mono">' + (s.file_path || '--') + '</span></div>';
+        html += '<div class="info-row"><span class="label">数据库大小</span><span class="val mono" style="color:var(--brand);font-weight:700">' + (s.file_size_human || '--') + '</span></div>';
+      } else {
+        html += '<div class="info-row"><span class="label">' + s.label + '</span><span class="val">' + s.total_records + ' 条记录</span></div>';
+        if (s.symbols_count > 0) {
+          html += '<div class="info-row"><span class="label">  涉及股票数</span><span class="val">' + s.symbols_count + '</span></div>';
+        }
+        // Show per-symbol details
+        if (s.symbols && s.symbols.length > 0) {
+          html += '<div style="margin-top:10px;padding:10px;background:var(--bg);border-radius:8px;max-height:240px;overflow-y:auto">';
+          html += '<table style="width:100%;font-size:12px"><thead><tr><th style="text-align:left;padding:4px 8px;color:var(--ink3)">股票代码</th><th style="text-align:right;padding:4px 8px;color:var(--ink3)">记录数</th><th style="text-align:right;padding:4px 8px;color:var(--ink3)">最早日期</th><th style="text-align:right;padding:4px 8px;color:var(--ink3)">最新日期</th></tr></thead><tbody>';
+          for (var j = 0; j < s.symbols.length; j++) {
+            var sym = s.symbols[j];
+            html += '<tr><td style="padding:3px 8px;font-family:var(--mono)">' + sym.symbol + '</td><td style="padding:3px 8px;text-align:right">' + sym.records + '</td><td style="padding:3px 8px;text-align:right;color:var(--ink3)">' + (sym.earliest_date || '--') + '</td><td style="padding:3px 8px;text-align:right;color:var(--down)">' + (sym.latest_date || '--') + '</td></tr>';
+          }
+          html += '</tbody></table></div>';
+        }
+      }
+    }
+    statsEl.innerHTML = html || '<div class="loading">暂无数据</div>';
+
+    // Render tables summary
+    var tables = data.tables || [];
+    if (tables.length > 0) {
+      var thtml = '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">';
+      for (var k = 0; k < tables.length; k++) {
+        var t = tables[k];
+        thtml += '<div style="padding:12px;background:var(--bg);border-radius:8px;text-align:center">';
+        thtml += '<div style="font-size:12px;color:var(--ink3);margin-bottom:4px">' + t.table + '</div>';
+        thtml += '<div style="font-size:20px;font-weight:700;font-family:var(--mono)">' + t.records + '</div>';
+        thtml += '<div style="font-size:11px;color:var(--ink3)">条记录</div>';
+        thtml += '</div>';
+      }
+      thtml += '</div>';
+      tablesEl.innerHTML = thtml;
+    } else {
+      tablesEl.innerHTML = '<div class="loading">暂无数据</div>';
+    }
+  } catch (e) {
+    statsEl.innerHTML = '<div class="loading" style="color:var(--up)">加载失败: ' + e.message + '</div>';
+    tablesEl.innerHTML = '<div class="loading" style="color:var(--up)">加载失败</div>';
+  }
+}
+
+// Full sync with SSE progress
+async function fullSync() {
+  var btn = document.getElementById('fullSyncBtn');
+  var progressEl = document.getElementById('fullSyncProgress');
+  var statusEl = document.getElementById('fullSyncStatus');
+  var barEl = document.getElementById('fullSyncBar');
+  var pctEl = document.getElementById('fullSyncPct');
+  var detailEl = document.getElementById('fullSyncDetail');
+
+  btn.disabled = true;
+  btn.textContent = '同步中...';
+  progressEl.style.display = 'block';
+  statusEl.textContent = '正在获取A股股票列表...';
+  barEl.style.width = '0%';
+  pctEl.textContent = '0%';
+  detailEl.textContent = '';
+  addLog('开始全量更新（全部A股 → 本地数据库）...');
+
+  try {
+    var response = await fetch('/api/data/full-sync-stream', { method: 'POST' });
+    var reader = response.body.getReader();
+    var decoder = new TextDecoder();
+    var buffer = '';
+
+    while (true) {
+      var result = await reader.read();
+      if (result.done) break;
+      buffer += decoder.decode(result.value, { stream: true });
+
+      var lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (line.startsWith('data: ')) {
+          try {
+            var msg = JSON.parse(line.substring(6));
+            if (msg.step === 'stock_list') {
+              if (msg.status === 'done') {
+                statusEl.textContent = '获取到 ' + msg.count + ' 只A股股票';
+                barEl.style.width = '10%';
+                pctEl.textContent = '10%';
+                addLog('获取A股列表完成：' + msg.count + ' 只', 'success');
+              } else if (msg.status === 'error') {
+                addLog('获取股票列表失败：' + msg.message, 'error');
+              }
+            } else if (msg.step === 'stock_info') {
+              if (msg.status === 'done') {
+                statusEl.textContent = '股票基本信息已同步（新增 ' + msg.added + ' 只）';
+                barEl.style.width = '20%';
+                pctEl.textContent = '20%';
+                addLog('股票基本信息同步完成：新增 ' + msg.added + ' 只', 'success');
+              }
+            } else if (msg.step === 'kline') {
+              if (msg.status === 'start') {
+                statusEl.textContent = '开始同步K线数据（共 ' + msg.total + ' 只）...';
+                addLog('开始批量同步K线：' + msg.total + ' 只股票');
+              } else if (msg.status === 'progress') {
+                var pct = Math.round((msg.current / msg.total) * 70) + 20;
+                barEl.style.width = pct + '%';
+                pctEl.textContent = pct + '%';
+                detailEl.textContent = msg.current + '/' + msg.total + ' | 成功 ' + msg.success + ' | 失败 ' + msg.failed + ' | 记录 ' + msg.records + ' | 当前: ' + msg.symbol;
+              } else if (msg.status === 'done') {
+                barEl.style.width = '95%';
+                pctEl.textContent = '95%';
+                addLog('K线同步完成：成功 ' + msg.success + ' 只，共 ' + msg.records + ' 条记录', 'success');
+              }
+            } else if (msg.step === 'all_done') {
+              barEl.style.width = '100%';
+              pctEl.textContent = '100%';
+              statusEl.textContent = '全量更新完成！股票 ' + msg.stock_count + ' 只，K线记录 ' + msg.kline_records + ' 条';
+              detailEl.textContent = '';
+              addLog('全量更新完成！', 'success');
+              loadStats();
+            }
+          } catch (e) { /* parse error, skip */ }
+        }
+      }
+    }
+  } catch (e) {
+    addLog('全量更新失败：' + e.message, 'error');
+    statusEl.textContent = '更新失败：' + e.message;
+  }
+
+  btn.disabled = false;
+  btn.textContent = '🚀 全量更新（全部A股 → 本地数据库）';
+}
+
+// 更新最新数据：各股从自身最后日期分别补至当前交易日
+async function updateLatest() {
+  var btn = document.getElementById('updateLatestBtn');
+  var progressEl = document.getElementById('fullSyncProgress');
+  var statusEl = document.getElementById('fullSyncStatus');
+  var barEl = document.getElementById('fullSyncBar');
+  var pctEl = document.getElementById('fullSyncPct');
+  var detailEl = document.getElementById('fullSyncDetail');
+
+  btn.disabled = true;
+  btn.textContent = '更新中...';
+  progressEl.style.display = 'block';
+  statusEl.textContent = '正在统计各股票已有数据日期...';
+  barEl.style.width = '0%';
+  pctEl.textContent = '0%';
+  detailEl.textContent = '';
+  addLog('开始更新最新数据（每只股票分别补至当前日期）...');
+
+  try {
+    var response = await fetch('/api/data/update-latest-stream', { method: 'POST' });
+    var reader = response.body.getReader();
+    var decoder = new TextDecoder();
+    var buffer = '';
+
+    while (true) {
+      var result = await reader.read();
+      if (result.done) break;
+      buffer += decoder.decode(result.value, { stream: true });
+      var lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (!line.startsWith('data: ')) continue;
+        try {
+          var msg = JSON.parse(line.substring(6));
+          if (msg.step === 'init' && msg.status === 'done') {
+            statusEl.textContent = '共 ' + msg.total + ' 只股票待检查';
+            barEl.style.width = '5%'; pctEl.textContent = '5%';
+            addLog('股票池：' + msg.total + ' 只（已有数据 ' + msg.with_data + ' 只）', 'success');
+          } else if (msg.step === 'snapshot') {
+            if (msg.status === 'progress') {
+              var p1 = Math.round((msg.current / msg.total) * 40) + 5;
+              barEl.style.width = p1 + '%'; pctEl.textContent = p1 + '%';
+              detailEl.textContent = '获取行情快照 ' + msg.current + '/' + msg.total;
+            } else if (msg.status === 'done') {
+              statusEl.textContent = '当前交易日 ' + msg.cur_date + '，已获取 ' + msg.got + ' 只行情';
+              barEl.style.width = '50%'; pctEl.textContent = '50%';
+              addLog('行情快照完成：' + msg.got + ' 只，当前交易日 ' + msg.cur_date, 'success');
+            } else if (msg.status === 'saved') {
+              addLog('当日数据入库：新增 ' + msg.added + ' 条', 'success');
+            } else if (msg.status === 'error') {
+              addLog('快照入库失败：' + msg.message, 'error');
+            }
+          } else if (msg.step === 'gap') {
+            if (msg.status === 'start') {
+              statusEl.textContent = '正在补齐落后股票的历史缺口（' + msg.total + ' 只）...';
+              addLog('需补历史缺口的股票：' + msg.total + ' 只');
+            } else if (msg.status === 'progress') {
+              var p2 = 50 + Math.round((msg.current / (msg.total || 1)) * 45);
+              barEl.style.width = p2 + '%'; pctEl.textContent = p2 + '%';
+              detailEl.textContent = msg.current + '/' + msg.total + ' | 成功 ' + msg.ok + ' | 失败 ' + msg.fail + ' | 记录 ' + msg.records;
+            } else if (msg.status === 'done') {
+              barEl.style.width = '95%'; pctEl.textContent = '95%';
+              addLog('缺口补齐完成：成功 ' + msg.ok + ' 只，共 ' + msg.records + ' 条记录', 'success');
+            }
+          } else if (msg.step === 'all_done') {
+            barEl.style.width = '100%'; pctEl.textContent = '100%';
+            statusEl.textContent = '更新完成！当日新增 ' + msg.snapshot_added + ' 条，缺口补 ' + msg.gap_added + ' 条';
+            detailEl.textContent = '';
+            addLog('更新最新数据完成！当日 +' + msg.snapshot_added + ' 条，缺口 +' + msg.gap_added + ' 条', 'success');
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleString('zh-CN');
+            loadStats();
+          }
+        } catch (e) { /* skip parse error */ }
+      }
+    }
+  } catch (e) {
+    addLog('更新失败：' + e.message, 'error');
+    statusEl.textContent = '更新失败：' + e.message;
+  }
+
+  btn.disabled = false;
+  btn.textContent = '📅 更新最新数据（各股分别补至当前日期）';
+}
+
+// Auto-load stats on page load
+loadStats();
+</script>
+</body>
+</html>
